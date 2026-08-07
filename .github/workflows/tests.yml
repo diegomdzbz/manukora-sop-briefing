@@ -1,0 +1,32 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test dependencies
+        run: pip install pytest
+
+      - name: Run tests
+        run: python -m pytest -q
+
+      # The engine, the tests and the template briefing must all run with no API key.
+      # If this step ever needs a secret, the separation the project rests on has broken.
+      - name: Generate the briefing without an API key
+        run: python -m src.main --no-llm
+
+      - name: Fail if the committed briefing is stale
+        run: |
+          git diff --exit-code output/ \
+            || (echo "output/ is out of date — re-run 'python -m src.main --no-llm' and commit" && exit 1)

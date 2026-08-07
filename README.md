@@ -14,7 +14,7 @@ Work in progress. Sections land as their branches merge — see the commit histo
 
 - [x] Scaffold, mock data, build instructions
 - [x] Calculation engine
-- [ ] Tests and CI
+- [x] Tests and CI
 - [ ] Narrative layer
 - [ ] Output integrity checks
 - [ ] n8n orchestration
@@ -81,6 +81,40 @@ the output.
 - **"Sold poorly" means falling behind the portfolio.** Nothing declined in absolute terms
   this month, so the honest reading is relative, and the briefing says so explicitly rather
   than implying a decline that did not happen.
+
+---
+
+## How I verified it
+
+```bash
+python -m pytest -q     # 42 tests
+```
+
+The suite is split by what it protects.
+
+**`tests/test_business_rules.py`** — one test per rule the brief states about reading this
+data. Where it can, each test also demonstrates what the *wrong* reading produces, so it
+documents the trap rather than only guarding against it. Three worth calling out:
+
+- Anchoring Bioactive Blends to December inflates their growth, which inflates projected
+  demand, which inflates revenue opportunity — and revenue opportunity is what ranks the
+  reorder queue. The wrong baseline does not just misreport a trend, it reorders the
+  recommendations. The test asserts that.
+- Reading `Order_Arrival_Months = 0` as "arrives immediately" would credit SKUs with stock
+  they do not have and empty the queue of exactly the SKUs that need attention.
+- Measuring cover against one channel instead of the pooled position roughly doubles every
+  cover figure. MGO 850+ 500g is at 1.8 months pooled and would read over 3 months on
+  Shopify alone — comfortably clearing its target while genuinely running out.
+
+**`tests/test_engine.py`** — arithmetic and ranking. Reference totals were worked out by
+hand from the dataset before the engine existed and are pinned, so a change that alters a
+published figure fails rather than quietly producing a different briefing. It also checks
+the things that are easy to get subtly wrong: growth compounds rather than averaging;
+cover-after-arrival subtracts the demand consumed while the shipment is in transit; the
+queue is ordered by revenue and *not* by who runs out first.
+
+CI runs the suite, regenerates the briefing with no API key, and fails if the committed
+output no longer matches what the code produces.
 
 ---
 
