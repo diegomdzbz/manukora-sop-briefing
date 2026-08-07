@@ -1,0 +1,7 @@
+# Engine, tests and the --no-llm briefing need nothing beyond the standard library.
+# Everything below is optional, per layer.
+
+pytest>=8.0            # tests
+anthropic>=0.40        # narrative layer  (only needed with an API key)
+fastapi>=0.115         # /facts endpoint consumed by n8n
+uvicorn>=0.32          # server for the above
