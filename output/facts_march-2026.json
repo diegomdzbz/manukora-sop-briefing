@@ -11,6 +11,12 @@
     "planning_date": "2026-04-01",
     "sku_count": 12
   },
+  "reorder_summary": {
+    "sku_count": 6,
+    "overdue_count": 5,
+    "total_units": 5584,
+    "revenue_at_stake_usd": 157828.92
+  },
   "portfolio": {
     "units_by_month": {
       "December 2025": 5740,
