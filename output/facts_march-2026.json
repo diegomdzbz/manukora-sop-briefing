@@ -1,0 +1,942 @@
+{
+  "meta": {
+    "reporting_month": "March 2026",
+    "prior_month": "February 2026",
+    "months_covered": [
+      "December 2025",
+      "January 2026",
+      "February 2026",
+      "March 2026"
+    ],
+    "planning_date": "2026-04-01",
+    "sku_count": 12
+  },
+  "portfolio": {
+    "units_by_month": {
+      "December 2025": 5740,
+      "January 2026": 6152,
+      "February 2026": 6676,
+      "March 2026": 7180
+    },
+    "current_month_units": 7180,
+    "month_on_month_pct": 7.5,
+    "channel": {
+      "shopify_units_by_month": {
+        "December 2025": 3472,
+        "January 2026": 3684,
+        "February 2026": 3980,
+        "March 2026": 4316
+      },
+      "amazon_units_by_month": {
+        "December 2025": 2268,
+        "January 2026": 2468,
+        "February 2026": 2696,
+        "March 2026": 2864
+      },
+      "amazon_share_pct_by_month": {
+        "December 2025": 39.5,
+        "January 2026": 40.1,
+        "February 2026": 40.4,
+        "March 2026": 39.9
+      },
+      "amazon_share_swing_pct_points": 0.9,
+      "shopify_growth_full_period_pct": 24.3,
+      "amazon_growth_full_period_pct": 26.3
+    },
+    "total_revenue_opportunity_usd": 364962.55
+  },
+  "performance": {
+    "top_by_revenue_opportunity": [
+      "Manuka Honey MGO 263+ 250g",
+      "Manuka Honey MGO 514+ 250g",
+      "Manuka Honey MGO 263+ 500g"
+    ],
+    "top_by_growth": [
+      "Bioactive Blend Recovery 250g",
+      "Manuka Honey MGO 1700+ 100g",
+      "Bioactive Blend Immunity 250g"
+    ],
+    "weakest_by_growth": [
+      "Manuka Honey MGO 100+ 250g",
+      "Manuka Honey MGO 263+ 250g",
+      "Manuka Honey MGO 850+ 250g"
+    ],
+    "stalling_skus": [
+      "Manuka Honey MGO 100+ 250g"
+    ]
+  },
+  "reorder_queue": [
+    {
+      "rank": 1,
+      "sku": "Manuka Honey MGO 263+ 500g",
+      "quantity_units": 1232,
+      "order_by_date": "2026-04-16",
+      "is_overdue": false,
+      "urgency": "act_now",
+      "revenue_opportunity_usd": 40307.67,
+      "current_cover_months": 2.49,
+      "target_months_cover": 2,
+      "reorder_point_months": 4,
+      "month_on_month_pct": 8.9,
+      "has_order_placed": false
+    },
+    {
+      "rank": 2,
+      "sku": "Manuka Honey MGO 514+ 500g",
+      "quantity_units": 936,
+      "order_by_date": "2026-04-01",
+      "is_overdue": true,
+      "urgency": "critical",
+      "revenue_opportunity_usd": 34315.71,
+      "current_cover_months": 1.99,
+      "target_months_cover": 2,
+      "reorder_point_months": 4,
+      "month_on_month_pct": 11.4,
+      "has_order_placed": false
+    },
+    {
+      "rank": 3,
+      "sku": "Manuka Honey MGO 850+ 500g",
+      "quantity_units": 632,
+      "order_by_date": "2026-04-01",
+      "is_overdue": true,
+      "urgency": "critical",
+      "revenue_opportunity_usd": 29477.32,
+      "current_cover_months": 1.8,
+      "target_months_cover": 2,
+      "reorder_point_months": 4,
+      "month_on_month_pct": 8.9,
+      "has_order_placed": false
+    },
+    {
+      "rank": 4,
+      "sku": "Manuka Honey MGO 1700+ 100g",
+      "quantity_units": 746,
+      "order_by_date": "2026-04-01",
+      "is_overdue": true,
+      "urgency": "critical",
+      "revenue_opportunity_usd": 19856.69,
+      "current_cover_months": 2.8,
+      "target_months_cover": 3,
+      "reorder_point_months": 6,
+      "month_on_month_pct": 13.6,
+      "has_order_placed": true
+    },
+    {
+      "rank": 5,
+      "sku": "Bioactive Blend Energy 250g",
+      "quantity_units": 1000,
+      "order_by_date": "2026-04-01",
+      "is_overdue": true,
+      "urgency": "critical",
+      "revenue_opportunity_usd": 17395.65,
+      "current_cover_months": 1.91,
+      "target_months_cover": 2,
+      "reorder_point_months": 4,
+      "month_on_month_pct": 11.5,
+      "has_order_placed": false
+    },
+    {
+      "rank": 6,
+      "sku": "Bioactive Blend Recovery 250g",
+      "quantity_units": 1038,
+      "order_by_date": "2026-04-01",
+      "is_overdue": true,
+      "urgency": "critical",
+      "revenue_opportunity_usd": 16475.88,
+      "current_cover_months": 1.68,
+      "target_months_cover": 2,
+      "reorder_point_months": 4,
+      "month_on_month_pct": 13.7,
+      "has_order_placed": false
+    }
+  ],
+  "tensions": [
+    {
+      "sku": "Manuka Honey MGO 100+ 250g",
+      "type": "capital_committed_to_a_stalling_sku",
+      "detail": "Weakest growth in the portfolio at 0.8% month on month, while holding 6.2 months of cover against a 2-month target. A further 2,000 units land on 1 May 2026, taking cover to 7.14 months.",
+      "capital_at_stake_usd": 158336.64,
+      "recommended_action": "Do not reorder. Review whether the inbound order can be deferred or reduced, and redirect that working capital to the SKUs below target."
+    },
+    {
+      "sku": "Propolis Tincture 30ml",
+      "type": "phase_out_stockout_before_end_of_life",
+      "detail": "42 days of cover, running out around 13 May 2026, which falls inside the phase-out window rather than after it.",
+      "capital_at_stake_usd": 6578.12,
+      "recommended_action": "Cover sits above the reorder floor, so the rule says do not reorder. The decision is to confirm the end-of-life date and tell customers, not to buy more stock."
+    },
+    {
+      "sku": "Manuka Honey MGO 263+ 250g",
+      "type": "inbound_order_on_an_already_covered_sku",
+      "detail": "Already at 4.55 months of cover against a 2-month target, with 3,200 units inbound taking it to 5.55 months.",
+      "capital_at_stake_usd": 255147.08,
+      "recommended_action": "Demand is healthy, so this is a timing question rather than a demand question. Check whether the shipment can be staged later."
+    }
+  ],
+  "noise": [
+    {
+      "topic": "Channel mix",
+      "finding": "Amazon's share of units moved by 0.9 percentage points across the whole period. Shopify grew 24.3% and Amazon 26.3%.",
+      "why_ignore": "The channels are growing together. There is no mix shift to act on."
+    }
+  ],
+  "skus": [
+    {
+      "sku": "Manuka Honey MGO 100+ 250g",
+      "retail_price_usd": 24.99,
+      "units_by_month": {
+        "December 2025": 924,
+        "January 2026": 928,
+        "February 2026": 1024,
+        "March 2026": 1032
+      },
+      "channel_split_current_month": {
+        "shopify": 644,
+        "amazon": 388
+      },
+      "trend": {
+        "baseline_month": "December 2025",
+        "baseline_excludes_launch_month": false,
+        "monthly_growth_pct": 3.8,
+        "month_on_month_pct": 0.8,
+        "is_stalling_vs_portfolio": true
+      },
+      "demand": {
+        "current_month_units": 1032,
+        "projected_next_month_units": 1071
+      },
+      "money": {
+        "current_run_rate_usd": 25789.68,
+        "revenue_opportunity_usd": 26764.29,
+        "share_of_portfolio_opportunity_pct": 7.3
+      },
+      "inventory": {
+        "stock_on_hand": 6400,
+        "units_on_order": 2000,
+        "order_arrival_months": 1,
+        "has_order_placed": true,
+        "target_months_cover": 2,
+        "lead_time_months": 2,
+        "reorder_point_months": 4,
+        "current_cover_months": 6.2,
+        "current_cover_days": 189,
+        "cover_after_inbound_months": 7.14,
+        "projected_stockout_date": "2026-10-07",
+        "earliest_arrival_if_ordered_today": "2026-06-01",
+        "arrives_after_stockout": false,
+        "inbound_arrival_date": "2026-05-01",
+        "stocks_out_before_inbound_arrives": false,
+        "excess_units_above_target": 6336,
+        "excess_value_usd": 158336.64
+      },
+      "flags": {
+        "below_target_cover": false,
+        "reorder_point_breached": false,
+        "overstocked": true,
+        "phasing_out": false,
+        "needs_reorder": false,
+        "deprioritised_reason": null,
+        "urgency": "overstocked"
+      },
+      "reorder": {
+        "quantity_units": 0,
+        "order_by_date": null,
+        "is_overdue": false
+      }
+    },
+    {
+      "sku": "Manuka Honey MGO 263+ 250g",
+      "retail_price_usd": 34.99,
+      "units_by_month": {
+        "December 2025": 1328,
+        "January 2026": 1408,
+        "February 2026": 1528,
+        "March 2026": 1604
+      },
+      "channel_split_current_month": {
+        "shopify": 956,
+        "amazon": 648
+      },
+      "trend": {
+        "baseline_month": "December 2025",
+        "baseline_excludes_launch_month": false,
+        "monthly_growth_pct": 6.5,
+        "month_on_month_pct": 5.0,
+        "is_stalling_vs_portfolio": false
+      },
+      "demand": {
+        "current_month_units": 1604,
+        "projected_next_month_units": 1708
+      },
+      "money": {
+        "current_run_rate_usd": 56123.96,
+        "revenue_opportunity_usd": 59762.92,
+        "share_of_portfolio_opportunity_pct": 16.4
+      },
+      "inventory": {
+        "stock_on_hand": 7300,
+        "units_on_order": 3200,
+        "order_arrival_months": 1,
+        "has_order_placed": true,
+        "target_months_cover": 2,
+        "lead_time_months": 2,
+        "reorder_point_months": 4,
+        "current_cover_months": 4.55,
+        "current_cover_days": 139,
+        "cover_after_inbound_months": 5.55,
+        "projected_stockout_date": "2026-08-18",
+        "earliest_arrival_if_ordered_today": "2026-06-01",
+        "arrives_after_stockout": false,
+        "inbound_arrival_date": "2026-05-01",
+        "stocks_out_before_inbound_arrives": false,
+        "excess_units_above_target": 7292,
+        "excess_value_usd": 255147.08
+      },
+      "flags": {
+        "below_target_cover": false,
+        "reorder_point_breached": false,
+        "overstocked": true,
+        "phasing_out": false,
+        "needs_reorder": false,
+        "deprioritised_reason": null,
+        "urgency": "overstocked"
+      },
+      "reorder": {
+        "quantity_units": 0,
+        "order_by_date": null,
+        "is_overdue": false
+      }
+    },
+    {
+      "sku": "Manuka Honey MGO 263+ 500g",
+      "retail_price_usd": 54.99,
+      "units_by_month": {
+        "December 2025": 556,
+        "January 2026": 596,
+        "February 2026": 628,
+        "March 2026": 684
+      },
+      "channel_split_current_month": {
+        "shopify": 416,
+        "amazon": 268
+      },
+      "trend": {
+        "baseline_month": "December 2025",
+        "baseline_excludes_launch_month": false,
+        "monthly_growth_pct": 7.2,
+        "month_on_month_pct": 8.9,
+        "is_stalling_vs_portfolio": false
+      },
+      "demand": {
+        "current_month_units": 684,
+        "projected_next_month_units": 733
+      },
+      "money": {
+        "current_run_rate_usd": 37613.16,
+        "revenue_opportunity_usd": 40307.67,
+        "share_of_portfolio_opportunity_pct": 11.0
+      },
+      "inventory": {
+        "stock_on_hand": 1700,
+        "units_on_order": 0,
+        "order_arrival_months": 0,
+        "has_order_placed": false,
+        "target_months_cover": 2,
+        "lead_time_months": 2,
+        "reorder_point_months": 4,
+        "current_cover_months": 2.49,
+        "current_cover_days": 76,
+        "cover_after_inbound_months": null,
+        "projected_stockout_date": "2026-06-16",
+        "earliest_arrival_if_ordered_today": "2026-06-01",
+        "arrives_after_stockout": false,
+        "inbound_arrival_date": null,
+        "stocks_out_before_inbound_arrives": false,
+        "excess_units_above_target": 332,
+        "excess_value_usd": 18256.68
+      },
+      "flags": {
+        "below_target_cover": false,
+        "reorder_point_breached": true,
+        "overstocked": false,
+        "phasing_out": false,
+        "needs_reorder": true,
+        "deprioritised_reason": null,
+        "urgency": "act_now"
+      },
+      "reorder": {
+        "quantity_units": 1232,
+        "order_by_date": "2026-04-16",
+        "is_overdue": false
+      }
+    },
+    {
+      "sku": "Manuka Honey MGO 514+ 250g",
+      "retail_price_usd": 49.99,
+      "units_by_month": {
+        "December 2025": 760,
+        "January 2026": 808,
+        "February 2026": 864,
+        "March 2026": 940
+      },
+      "channel_split_current_month": {
+        "shopify": 564,
+        "amazon": 376
+      },
+      "trend": {
+        "baseline_month": "December 2025",
+        "baseline_excludes_launch_month": false,
+        "monthly_growth_pct": 7.3,
+        "month_on_month_pct": 8.8,
+        "is_stalling_vs_portfolio": false
+      },
+      "demand": {
+        "current_month_units": 940,
+        "projected_next_month_units": 1009
+      },
+      "money": {
+        "current_run_rate_usd": 46990.6,
+        "revenue_opportunity_usd": 50439.91,
+        "share_of_portfolio_opportunity_pct": 13.8
+      },
+      "inventory": {
+        "stock_on_hand": 3400,
+        "units_on_order": 1600,
+        "order_arrival_months": 1,
+        "has_order_placed": true,
+        "target_months_cover": 2,
+        "lead_time_months": 2,
+        "reorder_point_months": 4,
+        "current_cover_months": 3.62,
+        "current_cover_days": 110,
+        "cover_after_inbound_months": 4.32,
+        "projected_stockout_date": "2026-07-20",
+        "earliest_arrival_if_ordered_today": "2026-06-01",
+        "arrives_after_stockout": false,
+        "inbound_arrival_date": "2026-05-01",
+        "stocks_out_before_inbound_arrives": false,
+        "excess_units_above_target": 3120,
+        "excess_value_usd": 155968.8
+      },
+      "flags": {
+        "below_target_cover": false,
+        "reorder_point_breached": true,
+        "overstocked": false,
+        "phasing_out": false,
+        "needs_reorder": false,
+        "deprioritised_reason": null,
+        "urgency": "healthy"
+      },
+      "reorder": {
+        "quantity_units": 0,
+        "order_by_date": null,
+        "is_overdue": false
+      }
+    },
+    {
+      "sku": "Manuka Honey MGO 514+ 500g",
+      "retail_price_usd": 79.99,
+      "units_by_month": {
+        "December 2025": 300,
+        "January 2026": 328,
+        "February 2026": 352,
+        "March 2026": 392
+      },
+      "channel_split_current_month": {
+        "shopify": 228,
+        "amazon": 164
+      },
+      "trend": {
+        "baseline_month": "December 2025",
+        "baseline_excludes_launch_month": false,
+        "monthly_growth_pct": 9.3,
+        "month_on_month_pct": 11.4,
+        "is_stalling_vs_portfolio": false
+      },
+      "demand": {
+        "current_month_units": 392,
+        "projected_next_month_units": 429
+      },
+      "money": {
+        "current_run_rate_usd": 31356.08,
+        "revenue_opportunity_usd": 34315.71,
+        "share_of_portfolio_opportunity_pct": 9.4
+      },
+      "inventory": {
+        "stock_on_hand": 780,
+        "units_on_order": 0,
+        "order_arrival_months": 0,
+        "has_order_placed": false,
+        "target_months_cover": 2,
+        "lead_time_months": 2,
+        "reorder_point_months": 4,
+        "current_cover_months": 1.99,
+        "current_cover_days": 61,
+        "cover_after_inbound_months": null,
+        "projected_stockout_date": "2026-06-01",
+        "earliest_arrival_if_ordered_today": "2026-06-01",
+        "arrives_after_stockout": false,
+        "inbound_arrival_date": null,
+        "stocks_out_before_inbound_arrives": false,
+        "excess_units_above_target": 0,
+        "excess_value_usd": 0.0
+      },
+      "flags": {
+        "below_target_cover": true,
+        "reorder_point_breached": true,
+        "overstocked": false,
+        "phasing_out": false,
+        "needs_reorder": true,
+        "deprioritised_reason": null,
+        "urgency": "critical"
+      },
+      "reorder": {
+        "quantity_units": 936,
+        "order_by_date": "2026-04-01",
+        "is_overdue": true
+      }
+    },
+    {
+      "sku": "Manuka Honey MGO 850+ 250g",
+      "retail_price_usd": 69.99,
+      "units_by_month": {
+        "December 2025": 440,
+        "January 2026": 472,
+        "February 2026": 500,
+        "March 2026": 536
+      },
+      "channel_split_current_month": {
+        "shopify": 320,
+        "amazon": 216
+      },
+      "trend": {
+        "baseline_month": "December 2025",
+        "baseline_excludes_launch_month": false,
+        "monthly_growth_pct": 6.8,
+        "month_on_month_pct": 7.2,
+        "is_stalling_vs_portfolio": false
+      },
+      "demand": {
+        "current_month_units": 536,
+        "projected_next_month_units": 572
+      },
+      "money": {
+        "current_run_rate_usd": 37514.64,
+        "revenue_opportunity_usd": 40034.28,
+        "share_of_portfolio_opportunity_pct": 11.0
+      },
+      "inventory": {
+        "stock_on_hand": 1900,
+        "units_on_order": 800,
+        "order_arrival_months": 2,
+        "has_order_placed": true,
+        "target_months_cover": 2,
+        "lead_time_months": 2,
+        "reorder_point_months": 4,
+        "current_cover_months": 3.54,
+        "current_cover_days": 108,
+        "cover_after_inbound_months": 3.04,
+        "projected_stockout_date": "2026-07-18",
+        "earliest_arrival_if_ordered_today": "2026-06-01",
+        "arrives_after_stockout": false,
+        "inbound_arrival_date": "2026-06-01",
+        "stocks_out_before_inbound_arrives": false,
+        "excess_units_above_target": 1628,
+        "excess_value_usd": 113943.72
+      },
+      "flags": {
+        "below_target_cover": false,
+        "reorder_point_breached": true,
+        "overstocked": false,
+        "phasing_out": false,
+        "needs_reorder": false,
+        "deprioritised_reason": null,
+        "urgency": "healthy"
+      },
+      "reorder": {
+        "quantity_units": 0,
+        "order_by_date": null,
+        "is_overdue": false
+      }
+    },
+    {
+      "sku": "Manuka Honey MGO 850+ 500g",
+      "retail_price_usd": 109.99,
+      "units_by_month": {
+        "December 2025": 184,
+        "January 2026": 208,
+        "February 2026": 224,
+        "March 2026": 244
+      },
+      "channel_split_current_month": {
+        "shopify": 144,
+        "amazon": 100
+      },
+      "trend": {
+        "baseline_month": "December 2025",
+        "baseline_excludes_launch_month": false,
+        "monthly_growth_pct": 9.9,
+        "month_on_month_pct": 8.9,
+        "is_stalling_vs_portfolio": false
+      },
+      "demand": {
+        "current_month_units": 244,
+        "projected_next_month_units": 268
+      },
+      "money": {
+        "current_run_rate_usd": 26837.56,
+        "revenue_opportunity_usd": 29477.32,
+        "share_of_portfolio_opportunity_pct": 8.1
+      },
+      "inventory": {
+        "stock_on_hand": 440,
+        "units_on_order": 0,
+        "order_arrival_months": 0,
+        "has_order_placed": false,
+        "target_months_cover": 2,
+        "lead_time_months": 2,
+        "reorder_point_months": 4,
+        "current_cover_months": 1.8,
+        "current_cover_days": 55,
+        "cover_after_inbound_months": null,
+        "projected_stockout_date": "2026-05-26",
+        "earliest_arrival_if_ordered_today": "2026-06-01",
+        "arrives_after_stockout": true,
+        "inbound_arrival_date": null,
+        "stocks_out_before_inbound_arrives": false,
+        "excess_units_above_target": 0,
+        "excess_value_usd": 0.0
+      },
+      "flags": {
+        "below_target_cover": true,
+        "reorder_point_breached": true,
+        "overstocked": false,
+        "phasing_out": false,
+        "needs_reorder": true,
+        "deprioritised_reason": null,
+        "urgency": "critical"
+      },
+      "reorder": {
+        "quantity_units": 632,
+        "order_by_date": "2026-04-01",
+        "is_overdue": true
+      }
+    },
+    {
+      "sku": "Manuka Honey MGO 1700+ 100g",
+      "retail_price_usd": 59.99,
+      "units_by_month": {
+        "December 2025": 224,
+        "January 2026": 248,
+        "February 2026": 264,
+        "March 2026": 300
+      },
+      "channel_split_current_month": {
+        "shopify": 176,
+        "amazon": 124
+      },
+      "trend": {
+        "baseline_month": "December 2025",
+        "baseline_excludes_launch_month": false,
+        "monthly_growth_pct": 10.2,
+        "month_on_month_pct": 13.6,
+        "is_stalling_vs_portfolio": false
+      },
+      "demand": {
+        "current_month_units": 300,
+        "projected_next_month_units": 331
+      },
+      "money": {
+        "current_run_rate_usd": 17997.0,
+        "revenue_opportunity_usd": 19856.69,
+        "share_of_portfolio_opportunity_pct": 5.4
+      },
+      "inventory": {
+        "stock_on_hand": 840,
+        "units_on_order": 400,
+        "order_arrival_months": 2,
+        "has_order_placed": true,
+        "target_months_cover": 3,
+        "lead_time_months": 3,
+        "reorder_point_months": 6,
+        "current_cover_months": 2.8,
+        "current_cover_days": 85,
+        "cover_after_inbound_months": 2.13,
+        "projected_stockout_date": "2026-06-25",
+        "earliest_arrival_if_ordered_today": "2026-07-01",
+        "arrives_after_stockout": true,
+        "inbound_arrival_date": "2026-06-01",
+        "stocks_out_before_inbound_arrives": false,
+        "excess_units_above_target": 340,
+        "excess_value_usd": 20396.6
+      },
+      "flags": {
+        "below_target_cover": true,
+        "reorder_point_breached": true,
+        "overstocked": false,
+        "phasing_out": false,
+        "needs_reorder": true,
+        "deprioritised_reason": null,
+        "urgency": "critical"
+      },
+      "reorder": {
+        "quantity_units": 746,
+        "order_by_date": "2026-04-01",
+        "is_overdue": true
+      }
+    },
+    {
+      "sku": "Propolis Tincture 30ml",
+      "retail_price_usd": 34.99,
+      "units_by_month": {
+        "December 2025": 120,
+        "January 2026": 140,
+        "February 2026": 152,
+        "March 2026": 168
+      },
+      "channel_split_current_month": {
+        "shopify": 104,
+        "amazon": 64
+      },
+      "trend": {
+        "baseline_month": "December 2025",
+        "baseline_excludes_launch_month": false,
+        "monthly_growth_pct": 11.9,
+        "month_on_month_pct": 10.5,
+        "is_stalling_vs_portfolio": false
+      },
+      "demand": {
+        "current_month_units": 168,
+        "projected_next_month_units": 188
+      },
+      "money": {
+        "current_run_rate_usd": 5878.32,
+        "revenue_opportunity_usd": 6578.12,
+        "share_of_portfolio_opportunity_pct": 1.8
+      },
+      "inventory": {
+        "stock_on_hand": 230,
+        "units_on_order": 0,
+        "order_arrival_months": 0,
+        "has_order_placed": false,
+        "target_months_cover": 2,
+        "lead_time_months": 2,
+        "reorder_point_months": 4,
+        "current_cover_months": 1.37,
+        "current_cover_days": 42,
+        "cover_after_inbound_months": null,
+        "projected_stockout_date": "2026-05-13",
+        "earliest_arrival_if_ordered_today": "2026-06-01",
+        "arrives_after_stockout": true,
+        "inbound_arrival_date": null,
+        "stocks_out_before_inbound_arrives": false,
+        "excess_units_above_target": 0,
+        "excess_value_usd": 0.0
+      },
+      "flags": {
+        "below_target_cover": true,
+        "reorder_point_breached": true,
+        "overstocked": false,
+        "phasing_out": true,
+        "needs_reorder": false,
+        "deprioritised_reason": "Phasing out in Q2 2026; reorder only below 30 days of cover",
+        "urgency": "critical"
+      },
+      "reorder": {
+        "quantity_units": 0,
+        "order_by_date": null,
+        "is_overdue": false
+      }
+    },
+    {
+      "sku": "Bioactive Blend Immunity 250g",
+      "retail_price_usd": 39.99,
+      "units_by_month": {
+        "December 2025": 384,
+        "January 2026": 424,
+        "February 2026": 472,
+        "March 2026": 528
+      },
+      "channel_split_current_month": {
+        "shopify": 316,
+        "amazon": 212
+      },
+      "trend": {
+        "baseline_month": "January 2026",
+        "baseline_excludes_launch_month": true,
+        "monthly_growth_pct": 11.6,
+        "month_on_month_pct": 11.9,
+        "is_stalling_vs_portfolio": false
+      },
+      "demand": {
+        "current_month_units": 528,
+        "projected_next_month_units": 589
+      },
+      "money": {
+        "current_run_rate_usd": 21114.72,
+        "revenue_opportunity_usd": 23554.11,
+        "share_of_portfolio_opportunity_pct": 6.5
+      },
+      "inventory": {
+        "stock_on_hand": 1200,
+        "units_on_order": 800,
+        "order_arrival_months": 1,
+        "has_order_placed": true,
+        "target_months_cover": 2,
+        "lead_time_months": 2,
+        "reorder_point_months": 4,
+        "current_cover_months": 2.27,
+        "current_cover_days": 69,
+        "cover_after_inbound_months": 2.79,
+        "projected_stockout_date": "2026-06-09",
+        "earliest_arrival_if_ordered_today": "2026-06-01",
+        "arrives_after_stockout": false,
+        "inbound_arrival_date": "2026-05-01",
+        "stocks_out_before_inbound_arrives": false,
+        "excess_units_above_target": 944,
+        "excess_value_usd": 37750.56
+      },
+      "flags": {
+        "below_target_cover": false,
+        "reorder_point_breached": true,
+        "overstocked": false,
+        "phasing_out": false,
+        "needs_reorder": false,
+        "deprioritised_reason": null,
+        "urgency": "healthy"
+      },
+      "reorder": {
+        "quantity_units": 0,
+        "order_by_date": null,
+        "is_overdue": false
+      }
+    },
+    {
+      "sku": "Bioactive Blend Energy 250g",
+      "retail_price_usd": 39.99,
+      "units_by_month": {
+        "December 2025": 272,
+        "January 2026": 308,
+        "February 2026": 348,
+        "March 2026": 388
+      },
+      "channel_split_current_month": {
+        "shopify": 232,
+        "amazon": 156
+      },
+      "trend": {
+        "baseline_month": "January 2026",
+        "baseline_excludes_launch_month": true,
+        "monthly_growth_pct": 12.2,
+        "month_on_month_pct": 11.5,
+        "is_stalling_vs_portfolio": false
+      },
+      "demand": {
+        "current_month_units": 388,
+        "projected_next_month_units": 435
+      },
+      "money": {
+        "current_run_rate_usd": 15516.12,
+        "revenue_opportunity_usd": 17395.65,
+        "share_of_portfolio_opportunity_pct": 4.8
+      },
+      "inventory": {
+        "stock_on_hand": 740,
+        "units_on_order": 0,
+        "order_arrival_months": 0,
+        "has_order_placed": false,
+        "target_months_cover": 2,
+        "lead_time_months": 2,
+        "reorder_point_months": 4,
+        "current_cover_months": 1.91,
+        "current_cover_days": 58,
+        "cover_after_inbound_months": null,
+        "projected_stockout_date": "2026-05-29",
+        "earliest_arrival_if_ordered_today": "2026-06-01",
+        "arrives_after_stockout": true,
+        "inbound_arrival_date": null,
+        "stocks_out_before_inbound_arrives": false,
+        "excess_units_above_target": 0,
+        "excess_value_usd": 0.0
+      },
+      "flags": {
+        "below_target_cover": true,
+        "reorder_point_breached": true,
+        "overstocked": false,
+        "phasing_out": false,
+        "needs_reorder": true,
+        "deprioritised_reason": null,
+        "urgency": "critical"
+      },
+      "reorder": {
+        "quantity_units": 1000,
+        "order_by_date": "2026-04-01",
+        "is_overdue": true
+      }
+    },
+    {
+      "sku": "Bioactive Blend Recovery 250g",
+      "retail_price_usd": 39.99,
+      "units_by_month": {
+        "December 2025": 248,
+        "January 2026": 284,
+        "February 2026": 320,
+        "March 2026": 364
+      },
+      "channel_split_current_month": {
+        "shopify": 216,
+        "amazon": 148
+      },
+      "trend": {
+        "baseline_month": "January 2026",
+        "baseline_excludes_launch_month": true,
+        "monthly_growth_pct": 13.2,
+        "month_on_month_pct": 13.7,
+        "is_stalling_vs_portfolio": false
+      },
+      "demand": {
+        "current_month_units": 364,
+        "projected_next_month_units": 412
+      },
+      "money": {
+        "current_run_rate_usd": 14556.36,
+        "revenue_opportunity_usd": 16475.88,
+        "share_of_portfolio_opportunity_pct": 4.5
+      },
+      "inventory": {
+        "stock_on_hand": 610,
+        "units_on_order": 0,
+        "order_arrival_months": 0,
+        "has_order_placed": false,
+        "target_months_cover": 2,
+        "lead_time_months": 2,
+        "reorder_point_months": 4,
+        "current_cover_months": 1.68,
+        "current_cover_days": 51,
+        "cover_after_inbound_months": null,
+        "projected_stockout_date": "2026-05-22",
+        "earliest_arrival_if_ordered_today": "2026-06-01",
+        "arrives_after_stockout": true,
+        "inbound_arrival_date": null,
+        "stocks_out_before_inbound_arrives": false,
+        "excess_units_above_target": 0,
+        "excess_value_usd": 0.0
+      },
+      "flags": {
+        "below_target_cover": true,
+        "reorder_point_breached": true,
+        "overstocked": false,
+        "phasing_out": false,
+        "needs_reorder": true,
+        "deprioritised_reason": null,
+        "urgency": "critical"
+      },
+      "reorder": {
+        "quantity_units": 1038,
+        "order_by_date": "2026-04-01",
+        "is_overdue": true
+      }
+    }
+  ]
+}
