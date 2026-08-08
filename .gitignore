@@ -19,6 +19,10 @@ htmlcov/
 n8n/.n8n/
 n8n_data/
 
+# Local agent state and worktrees. Holds a full checkout of this repo, so an
+# unguarded `git add -A` would otherwise commit a nested copy of the project.
+.claude/
+
 # OS
 .DS_Store
 Thumbs.db
