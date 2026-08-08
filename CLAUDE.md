@@ -52,6 +52,17 @@ against exactly this failure.
 If a number is needed for prose, run the engine and read it off. If that feels like too much
 friction for a single figure, that friction is the point.
 
+**The one figure the engine cannot produce** is the size of the test suite, which the README
+quotes twice. It has no fact pack to be read off, so the rule was quietly suspended for it —
+and it drifted. Not by being wrong when written: it was correct for four commits, and then
+two later commits each added tests without touching the README. That is the whole failure
+mode. A figure nobody has to update stays right until it silently does not, and the moment
+it turns is invisible.
+
+A hand-typed figure is admissible only where something checks it. `tests/test_docs_claims.py`
+compares every count the documentation states against the suite that actually ran, so this
+one is now maintained by the build rather than by whoever remembers.
+
 ### 2. Business rules live in `config.py` and nowhere else
 
 Target cover overrides, phase-out SKUs, launch dates that invalidate early months, supplier

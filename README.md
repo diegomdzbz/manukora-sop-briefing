@@ -31,7 +31,7 @@ cd manukora-sop-briefing
 pip install pytest              # the only dependency, and only for the tests
 
 python -m src.main --no-llm     # complete briefing, no API key required
-python -m pytest -q             # 54 tests, no secrets needed
+python -m pytest -q             # 60 tests, no secrets needed
 ```
 
 `--no-llm` renders the whole briefing from a deterministic template — same figures, plainer
@@ -285,7 +285,7 @@ reviewed — but reviewed is not proven, and this section exists to keep that di
 ## How I verified it
 
 ```bash
-python -m pytest -q     # 54 tests
+python -m pytest -q     # 60 tests
 ```
 
 **The maths.** `tests/test_business_rules.py` has one test per rule the brief states, and
@@ -300,6 +300,11 @@ cover-after-arrival subtracts the demand consumed while the shipment is in trans
 to `facts.json`, and — because a test that cannot fail proves nothing — separately proves it
 catches an invented figure and proves it does not fire on SKU names, dates, or years.
 
+**The documentation.** `tests/test_docs_claims.py` checks the one figure here that no fact
+pack can source — the size of the suite, quoted twice above. It had drifted: typed once and
+left there while the suite grew past it. A count only the author maintains is a claim nobody
+checks, so the build checks it now.
+
 **Reproducibility.** CI runs the suite with no secrets, regenerates the briefing without an
 API key, and fails if the committed output drifts from what the code produces.
 
@@ -313,7 +318,7 @@ API key, and fails if the committed output drifts from what the code produces.
 | [`src/`](src/) | Config, loader, engine, schema, providers, narrative, renderer, CLI, and the `/facts` service n8n calls |
 | [`scripts/`](scripts/) | `run_v1_baseline.py` — reproduces the v1 run |
 | [`prompts/`](prompts/) | Both prompt stacks and the changelog |
-| [`tests/`](tests/) | Business rules, arithmetic, output integrity |
+| [`tests/`](tests/) | Business rules, arithmetic, output integrity, documentation claims |
 | [`output/`](output/) | The generated briefing and its fact pack |
 | [`n8n/`](n8n/) | Workflow export and canvas screenshot |
 | [`skills/`](skills/) | Reusable procedure for running and adapting this |
