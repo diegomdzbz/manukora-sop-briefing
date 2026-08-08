@@ -16,11 +16,14 @@ reported with the sentence it appeared in, so a failure is diagnosable at a glan
 from __future__ import annotations
 
 import re
+from pathlib import Path
 
 import pytest
 
 from src import config
 from src.render import compose_briefing, render_briefing, template_prose
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
 
 MONTHS = (
     "January|February|March|April|May|June|July|August|September|October|November|December"
@@ -28,11 +31,25 @@ MONTHS = (
 
 # Stripped before figures are extracted. Order matters: dates before bare years, or the
 # year inside a date is left behind as an orphan number.
+#
+# The product-identifier patterns are here because a model writing naturally abbreviates.
+# The first real model output referred to "MGO 263+ and MGO 514+ formats" and to
+# "MGO 100+ 250g" without the "Manuka Honey" prefix, so stripping exact SKU names was not
+# enough and the check flagged five product codes as unsourced figures. A digit
+# immediately followed by `+`, `g` or `ml` is a grade or a pack size — an identifier, not
+# a measurement — wherever it appears.
+# Both date orders are here because a model writes whichever it prefers. The renderer
+# emits "1 May 2026"; the first live run wrote "May 1, 2026" in prose, which left the year
+# orphaned and reported 2026 as an invented figure. Neither format is wrong — the check has
+# to read both.
 NOISE_PATTERNS = (
-    rf"\b\d{{1,2}} (?:{MONTHS}) \d{{4}}\b",   # 16 April 2026
-    rf"\b(?:{MONTHS}) \d{{4}}\b",             # March 2026
-    r"\bQ[1-4] \d{4}\b",                      # Q2 2026
-    r"\b\d{4}-\d{2}-\d{2}\b",                 # 2026-04-16
+    rf"\b\d{{1,2}} (?:{MONTHS}),? \d{{4}}\b",  # 16 April 2026
+    rf"\b(?:{MONTHS}) \d{{1,2}},? \d{{4}}\b",  # May 1, 2026
+    rf"\b(?:{MONTHS}) \d{{4}}\b",              # March 2026
+    r"\bQ[1-4] \d{4}\b",                       # Q2 2026
+    r"\b\d{4}-\d{2}-\d{2}\b",                  # 2026-04-16
+    r"\b\d+\+",                                # MGO 263+, MGO 1700+
+    r"\b\d+\s?(?:g|ml)\b",                     # 250g, 500 g, 30ml
 )
 
 FIGURE = re.compile(r"\d[\d,]*(?:\.\d+)?")
@@ -113,6 +130,34 @@ def test_the_check_tolerates_dates_skus_and_years(facts):
     briefing = (
         render_briefing(facts)
         + "\nOrder Manuka Honey MGO 1700+ 100g by 16 April 2026, before Q2 2026.\n"
+    )
+    assert not _unsourced_figures(briefing, facts)
+
+
+def test_the_check_tolerates_abbreviated_sku_references(facts):
+    """A model writing naturally does not repeat the full SKU name every time.
+
+    This is a regression test, not a hypothetical: the first live model run wrote
+    "MGO 263+ and MGO 514+ formats" and "MGO 100+ 250g", and the check reported five
+    product codes as unsourced figures. Grades and pack sizes are identifiers wherever
+    they appear.
+    """
+    briefing = render_briefing(facts) + (
+        "\nCore revenue drivers remain the MGO 263+ and MGO 514+ formats, with "
+        "MGO 100+ 250g and the 30ml tincture trailing.\n"
+    )
+    assert not _unsourced_figures(briefing, facts)
+
+
+def test_the_check_reads_dates_in_either_order(facts):
+    """Also a regression test.
+
+    The renderer writes "1 May 2026". The first live model run wrote "May 1, 2026" in
+    prose, which left the year orphaned and reported 2026 as an invented figure. Neither
+    format is wrong, so the check reads both.
+    """
+    briefing = render_briefing(facts) + (
+        "\nThe shipment lands on May 1, 2026, five weeks after the order of 16 April 2026.\n"
     )
     assert not _unsourced_figures(briefing, facts)
 
@@ -199,6 +244,39 @@ def test_briefing_completeness(facts):
 
     assert facts["tensions"], "the brief asks for the tension to be surfaced"
     assert facts["tensions"][0]["sku"] in briefing
+
+
+def test_the_committed_model_briefing_has_no_unsourced_figures(facts):
+    """The strongest form of the check: run it on the artefact that ships.
+
+    `output/sop_briefing_march-2026.md` was written by a model, not by the template. It is
+    the file a reviewer opens, so it is the file that has to be clean — a check that only
+    ever ran against generated-in-memory output would prove less.
+    """
+    committed = REPO_ROOT / "output" / "sop_briefing_march-2026.md"
+    if not committed.exists():
+        pytest.skip("no committed model briefing to check")
+
+    problems = _unsourced_figures(committed.read_text(encoding="utf-8"), facts)
+    assert not problems, "the committed briefing contains figures with no source:\n" + "\n".join(
+        f"  {value!r} in: {line}" for value, line in problems
+    )
+
+
+def test_the_committed_model_briefing_leads_with_the_engines_choice(facts):
+    """The engine decides what leads; the model writes it.
+
+    On the first live run the model chose the most urgent reorder as its headline instead
+    of the hardest decision. Both readings are defensible, but ranking belongs to the
+    engine — so the prompt says so and `check_against_facts` enforces it.
+    """
+    committed = REPO_ROOT / "output" / "sop_briefing_march-2026.md"
+    if not committed.exists():
+        pytest.skip("no committed model briefing to check")
+
+    briefing = committed.read_text(encoding="utf-8")
+    headline = briefing.split("## The decision this month", 1)[1].split("\n\n")[1]
+    assert facts["tensions"][0]["sku"] in headline
 
 
 def test_briefing_carries_no_column_codes(facts):

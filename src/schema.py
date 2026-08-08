@@ -156,3 +156,15 @@ def check_against_facts(prose: dict, facts: dict) -> None:
         raise BriefingContractError(
             "the fact pack flags something as noise but the briefing says nothing about it"
         )
+
+    # The engine decides what leads, not the model. On the first live run the model chose
+    # the most urgent reorder as its headline instead of the hardest decision — a
+    # defensible read, but it belongs to the ranking layer. The prompt says so and this
+    # enforces it.
+    if facts["tensions"]:
+        expected = facts["tensions"][0]["sku"]
+        if prose["headline"]["sku"] != expected:
+            raise BriefingContractError(
+                f"headline should lead with {expected!r} (the first tension, ranked by how "
+                f"hard the decision is) but leads with {prose['headline']['sku']!r}"
+            )

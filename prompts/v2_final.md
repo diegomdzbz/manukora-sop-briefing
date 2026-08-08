@@ -23,6 +23,12 @@ value from the fact pack, unrounded and unaltered.
 what the data says. "Hold the inbound order on X and move the capital to Y" beats "X has
 6.2 months of cover."
 
+**The headline is the first entry in `tensions`, not your own pick.** That list is already
+ordered by how hard the decision is rather than how big the number is, and the hardest
+decision is what deserves the top of the page. The most urgent reorder is not the headline —
+it is the top of the reorder queue, where it already appears. Write `headline.sku` as that
+first tension's SKU, exactly as spelled in the fact pack.
+
 **Explain the business consequence.** Every recommendation needs a reason a commercial
 person would accept: what it costs to get wrong, what it protects, why it outranks the
 thing below it. A reorder queue without reasoning is a list.
