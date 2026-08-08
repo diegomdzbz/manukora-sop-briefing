@@ -103,5 +103,9 @@ restates a figure from the table above it, that is the one to cut.
 
 Return the structured object you have been given the schema for. Write the
 `reorder_rationales` in the same order as the reorder queue in the fact pack, one entry per
-SKU, and one `tension_notes` entry per tension in the same order. If the fact pack lists
-nothing under noise, leave `noise_note` empty.
+SKU.
+
+`tension_notes` covers every tension **except the first** — that one is the headline and
+already has its own section, so repeating it there says the same thing twice on one page.
+
+If the fact pack lists nothing under noise, leave `noise_note` empty.

@@ -43,6 +43,14 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Write only the fact pack. Used by the n8n workflow.",
     )
     parser.add_argument(
+        "--allow-over-budget",
+        action="store_true",
+        help="Write the briefing even if it exceeds the five-minute reading budget. Off by "
+        "default: an over-length briefing fails the run rather than shipping quietly. Some "
+        "models will not come in under the ceiling on this document (see RUNBOOK.md), and "
+        "this is how you see their output without changing the ceiling for everyone.",
+    )
+    parser.add_argument(
         "--stdout", action="store_true", help="Also print the briefing to standard output"
     )
     return parser.parse_args(argv)
@@ -84,10 +92,9 @@ def main(argv: list[str] | None = None) -> int:
         from .render import compose_briefing
 
         try:
-            prose, source = write_prose(facts)
+            prose, source = write_prose(facts, allow_over_budget=args.allow_over_budget)
         except Exception as exc:  # noqa: BLE001 - surfaced to the operator, see RUNBOOK.md
             print(f"Narrative layer failed: {exc}", file=sys.stderr)
-            print("Re-run with --no-llm for the template briefing.", file=sys.stderr)
             return 1
         briefing = compose_briefing(facts, prose)
 
@@ -100,11 +107,20 @@ def main(argv: list[str] | None = None) -> int:
     briefing_path = args.output_dir / f"sop_briefing_{month_slug}{suffix}.md"
     briefing_path.write_text(briefing, encoding="utf-8", newline="\n")
     words = prose_word_count(briefing)
-    budget = "within" if words <= config.MAX_BRIEFING_WORDS else "OVER"
-    print(
-        f"Briefing written to {briefing_path} "
-        f"({source}, {words} prose words, {budget} the {config.MAX_BRIEFING_WORDS} budget)"
-    )
+    over = words - config.MAX_BRIEFING_WORDS
+    if over > 0:
+        # Only reachable with --allow-over-budget; without it the run already failed.
+        # Say so on stderr and name the override, so the line cannot be mistaken for a
+        # briefing that quietly passed.
+        budget = f"{over} words OVER the {config.MAX_BRIEFING_WORDS} budget, shipped anyway"
+        print(
+            f"Warning: this briefing exceeds the five-minute reading budget by {over} words. "
+            "It was written because --allow-over-budget was set.",
+            file=sys.stderr,
+        )
+    else:
+        budget = f"within the {config.MAX_BRIEFING_WORDS} budget"
+    print(f"Briefing written to {briefing_path} ({source}, {words} prose words, {budget})")
 
     if args.stdout:
         print()

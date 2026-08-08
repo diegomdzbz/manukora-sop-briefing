@@ -26,7 +26,7 @@ cd manukora-sop-briefing
 pip install pytest              # the only dependency, and only for the tests
 
 python -m src.main --no-llm     # complete briefing, no API key required
-python -m pytest -q             # 61 tests, no secrets needed
+python -m pytest -q             # 68 tests, no secrets needed
 ```
 
 `--no-llm` renders the whole briefing from a deterministic template — same figures, plainer
@@ -37,6 +37,13 @@ To have a model write the prose: put `ANTHROPIC_API_KEY` or `GEMINI_API_KEY` in 
 drop the flag. Both providers enforce the output schema server-side and neither needs an
 SDK — plain HTTPS over the standard library, so you are not installing a client for a
 vendor you do not use.
+
+> **If the run fails saying the briefing is over the reading budget**, nothing is broken.
+> Five minutes is a requirement, so a briefing that misses it fails rather than shipping
+> quietly — and some models will not come in under it on this document (Claude writes
+> 960–1,010 words here where Gemini writes 820–890). Use `--allow-over-budget` to see that
+> output anyway; it warns and names the overage rather than moving the ceiling. See
+> [`RUNBOOK.md`](RUNBOOK.md).
 
 | File in `output/` | Written by |
 |---|---|
@@ -233,7 +240,7 @@ each produced a briefing that passes the same tests.
 ## How I verified it
 
 ```bash
-python -m pytest -q     # 61 tests
+python -m pytest -q     # 68 tests
 ```
 
 **The maths.** `tests/test_business_rules.py` has one test per rule, and where possible each

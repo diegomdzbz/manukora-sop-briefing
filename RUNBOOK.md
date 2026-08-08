@@ -58,10 +58,24 @@ and asked to cut, and came back over anyway. The run fails rather than shipping 
 
 **This is expected on `claude-opus-5` and does not mean anything is broken.** It writes
 960–1,010 words for this document regardless of the allowance it is given, where Gemini
-writes 820–890. If you need the Anthropic path specifically, either accept the shorter
-`--no-llm` render or raise `MAX_BRIEFING_WORDS` in `config.py` — deliberately, and knowing
-that the number is the project's proxy for "readable in five minutes", not a figure the
-brief states.
+writes 820–890.
+
+Three ways forward, in the order I would try them:
+
+```bash
+python -m src.main --no-llm             # the template render, always inside the budget
+python -m src.main --allow-over-budget   # ship the long one, with a warning naming the overage
+```
+
+The flag exists so the flagship path is not a dead end. It does **not** move the ceiling: the
+default still refuses, the warning still names how far over it went, and every other run is
+held to the same number. What it does not do is wave anything else through — a briefing
+missing a recommendation is rejected with or without it.
+
+The third option is to raise `MAX_BRIEFING_WORDS` in `config.py`. Do that deliberately and
+knowing what it means: the number is this project's proxy for "readable in five minutes",
+not a figure the brief states, and changing it because one model overshot is how a
+requirement quietly becomes a preference.
 
 ### `BriefingContractError: reorder rationales do not match the queue`
 

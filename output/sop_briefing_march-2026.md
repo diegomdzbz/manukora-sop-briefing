@@ -1,14 +1,14 @@
 # S&OP Briefing — March 2026
 
-March 2026 saw total demand reach 7,180 units with 7.5% month-on-month growth, driven by strong momentum in high-MGO honey and Bioactive Blends while capital remains tied up in overstocked entry lines.
+March 2026 closed with solid portfolio expansion of 7.5% month-on-month, but working capital remains misallocated across key lines.
 
 ## The decision this month
 
-**Manuka Honey MGO 100+ 250g.** This line currently holds 6.2 months of cover against a 2-month target while month-on-month growth has stalled at 0.8%. Allowing the May shipment to land will increase cover to 7.14 months, tying up $158k in excess working capital that is needed to restock fast-growing lines facing stockouts.
+**Manuka Honey MGO 100+ 250g.** Holding 6.2 months of cover against a 2-month target ties up $158k in excess stock for the portfolio's weakest grower. The inbound order pushes cover to 7.14 months. Freeing this capital protects high-margin lines facing immediate stockout risks.
 
-Freeze reorders on this SKU and review whether the 2,000 units scheduled to land on 1 May 2026 can be deferred or reduced.
+Do not reorder, and evaluate deferring or reducing the 2,000 unit order arriving 1 May 2026.
 
-Working capital is heavily misallocated, with $413k trapped in excess stock across two overstocked SKUs while five critical reorders totaling $158k in revenue opportunity remain overdue. The largest capital overhangs are in Manuka Honey MGO 263+ 250g with $255k in excess value and Manuka Honey MGO 100+ 250g with $158k in excess value. Meanwhile, high-performing lines such as Manuka Honey MGO 514+ 500g and the Bioactive Blends have fallen below two months of cover and face stockouts in May 2026.
+Working capital is misaligned with actual demand, locking $413k in overstock across two lines while six active reorder SKUs represent $158k in revenue at stake.
 
 ## What to order, in priority order
 
@@ -23,20 +23,20 @@ Ranked by revenue at stake rather than by who runs out first, so the largest com
 | 5 | Bioactive Blend Energy 250g | 1,000 units | **Overdue** | 1.91 of 2 months | $17,396 |
 | 6 | Bioactive Blend Recovery 250g | 1,038 units | **Overdue** | 1.68 of 2 months | $16,476 |
 
-**Manuka Honey MGO 263+ 500g** — Place the order for 1,232 units by 16 April 2026 to protect $40.3k in revenue opportunity. Cover stands at 2.49 months with month-on-month growth at 8.9%, making this the top priority to order before lead times push stock levels below target.
+**Manuka Honey MGO 263+ 500g** — Order 1,232 units by 16 April 2026 to protect $40.3k in revenue opportunity. Current cover of 2.49 months has breached the reorder point, making prompt placement essential to prevent a stockout before mid-June 2026.
 
-**Manuka Honey MGO 514+ 500g** — Place the overdue order for 936 units immediately to safeguard $34.3k in revenue opportunity. Current cover has fallen to 1.99 months with stockout projected for 1 June 2026, leaving no operational buffer.
+**Manuka Honey MGO 514+ 500g** — Order 936 units immediately to cover an overdue order date and protect $34.3k in revenue opportunity. Stock cover has dipped to 1.99 months, below the 2-month target, with strong 11.4% month-on-month demand exhausting stock by June 2026.
 
 The rest, briefly:
 
-- **Manuka Honey MGO 850+ 500g** — Place the overdue order for 632 units immediately to protect $29.5k in revenue opportunity. Cover is down to 1.8 months and stockout is projected for 26 May 2026, meaning new orders placed today will arrive after stock runs out.
-- **Manuka Honey MGO 1700+ 100g** — Place the overdue order for 746 units immediately to secure $19.9k in revenue opportunity. While 400 units are on order for 1 June 2026, cover after inbound lands is only 2.13 months against a 3-month target, leaving the SKU vulnerable to further demand surges.
-- **Bioactive Blend Energy 250g** — Place the overdue order for 1,000 units immediately to capture $17.4k in revenue opportunity. Cover has dropped to 1.91 months with stockout expected on 29 May 2026.
-- **Bioactive Blend Recovery 250g** — Place the overdue order for 1,038 units immediately to protect $16.5k in revenue opportunity. Growth reached 13.7% month on month, but cover has dwindled to 1.68 months with stockout projected for 22 May 2026.
+- **Manuka Honey MGO 850+ 500g** — Order 632 units immediately; cover has fallen to critical levels at 1.8 months, exposing $29.5k in revenue to a stockout on 26 May 2026.
+- **Manuka Honey MGO 1700+ 100g** — Order 746 units immediately because the 400 units currently on order only raise cover to 2.13 months, leaving the SKU well short of its 3-month target.
+- **Bioactive Blend Energy 250g** — Order 1,000 units immediately to address an overdue order and restore cover from 1.91 months before a projected 29 May 2026 stockout.
+- **Bioactive Blend Recovery 250g** — Order 1,038 units immediately to support 13.7% month-on-month growth and fix critical cover of 1.68 months ahead of a 22 May 2026 stockout.
 
 ## How March 2026 went
 
-No products experienced absolute sales declines in March 2026. Growth was strongest in Bioactive Blend Recovery 250g, Manuka Honey MGO 1700+ 100g, and Bioactive Blend Immunity 250g. Weakest growth was concentrated in lower-MGO lines, with Manuka Honey MGO 100+ 250g growing slower than the rest of the portfolio at 0.8% month on month.
+Overall volume grew to 7,180 units in March 2026. Premium lines drove momentum, led by Bioactive Blend Recovery 250g up 13.7% and Manuka Honey MGO 1700+ 100g up 13.6%. Nothing declined outright across the period; Manuka Honey MGO 100+ 250g grew slower than the range at 0.8% month-on-month.
 
 Units across the period, so the month reads against the run rather than alone:
 
@@ -46,17 +46,16 @@ Units across the period, so the month reads against the run rather than alone:
 
 ## Also worth a decision
 
-- **Manuka Honey MGO 100+ 250g** — Do not reorder this SKU, and investigate whether the 2,000-unit shipment arriving on 1 May 2026 can be deferred or reduced to release capital for under-covered lines.
-- **Propolis Tincture 30ml** — Do not reorder despite cover falling to 1.37 months and stockout expected on 13 May 2026. This line is phasing out in Q2 2026 and cover remains above the 30-day floor, so the focus should be confirming the end-of-life schedule and notifying customers.
-- **Manuka Honey MGO 263+ 250g** — Do not place new orders, as current cover is 4.55 months and an inbound shipment of 3,200 units on 1 May 2026 will raise cover to 5.55 months. Demand is healthy at 5.0% growth, so negotiate staging future deliveries to prevent excessive holding costs.
+- **Propolis Tincture 30ml** — Stock runs out around 13 May 2026 with 1.37 months of cover during its Q2 2026 phase-out. Do not reorder; confirm final end-of-life dates and manage retail transition rather than buying stock.
+- **Manuka Honey MGO 263+ 250g** — The SKU holds 4.55 months of cover with 3,200 units inbound on 1 May 2026. Demand is healthy, so ask the supplier to stage shipment delivery later to preserve working capital.
 
 ## Not worth your attention
 
-Channel share changes between Shopify and Amazon are noise. Amazon share shifted by 0.9 percentage points across the four months, with Shopify growing 24.3% and Amazon growing 26.3% over the period, showing both channels are expanding together.
+Amazon's share of total units swung by only 0.9 percentage points from December 2025 to March 2026. Both sales channels are expanding together, so no channel rebalancing is needed.
 
 ## Before the next review
 
-Approve and issue the overdue purchase orders for the six queue SKUs immediately and engage logistics partners to adjust inbound delivery schedules for overstocked lines.
+Approve purchase orders for the overdue reorder queue and negotiate delivery deferrals on overstocked lines before 16 April 2026.
 
 ---
 

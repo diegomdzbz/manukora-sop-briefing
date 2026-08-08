@@ -70,26 +70,55 @@ def load_prompt(facts: dict) -> str:
     )
 
 
-def write_prose(facts: dict) -> tuple[dict, str]:
+class OverReadingBudget(NarrativeError):
+    """The model would not come in under the five-minute ceiling.
+
+    Its own subclass so a caller can distinguish "this briefing is too long" — a property
+    of the output — from "the API failed", which is a property of the run. Only the first
+    is something `--allow-over-budget` should be able to wave through.
+    """
+
+    def __init__(self, provider: str, written: int, ceiling: int) -> None:
+        self.written, self.ceiling = written, ceiling
+        super().__init__(
+            f"{provider} stayed over the reading budget after one rewrite: {written} words "
+            f"against a ceiling of {ceiling}. This is a known characteristic of some models "
+            "rather than a fault — see RUNBOOK.md. Use --no-llm for the template render, or "
+            "--allow-over-budget to ship it anyway."
+        )
+
+
+def write_prose(
+    facts: dict,
+    *,
+    allow_over_budget: bool = False,
+    provider=None,
+) -> tuple[dict, str]:
     """Call the model and return the validated prose plus a label for who wrote it.
 
-    Separated from `write_briefing` so tests can exercise assembly without a network call.
-    """
-    load_dotenv()
+    `allow_over_budget` overrides the reading-budget refusal. It defaults to off, so the
+    ceiling is enforced unless a caller explicitly opts out — the flag has to be typed, and
+    its name says what typing it means.
 
-    try:
-        provider = select_provider()
-    except ProviderError as exc:
-        raise NarrativeError(str(exc)) from exc
+    `provider` is injectable so tests can exercise the budget logic without a network call
+    or an API key.
+
+    Separated from `write_briefing` so tests can exercise assembly without a model.
+    """
+    from . import config
+    from .render import compose_briefing, prose_word_count, word_allowance
+
+    if provider is None:
+        load_dotenv()
+        try:
+            provider = select_provider()
+        except ProviderError as exc:
+            raise NarrativeError(str(exc)) from exc
 
     user = (
         "Here is the fact pack for this month's review. Write the briefing.\n\n"
         f"```json\n{json.dumps(facts, indent=2)}\n```"
     )
-
-    from . import config
-    from .render import compose_briefing, prose_word_count, word_allowance
-
     system = load_prompt(facts)
 
     def ask(extra: str = "") -> dict:
@@ -102,46 +131,53 @@ def write_prose(facts: dict) -> tuple[dict, str]:
                 f"{provider.info.label} returned malformed JSON: {exc}"
             ) from exc
 
+    def vetted(p: dict) -> int:
+        """Check the contract, then measure. In that order, always.
+
+        Rendering assumes the prose covers every SKU it was asked about — a response
+        missing a rationale raises a KeyError deep inside the renderer instead of the
+        contract error that says what actually went wrong. Validating first turns an
+        obscure crash into a diagnosable message, and costs nothing.
+        """
+        check_against_facts(p, facts)
+        return prose_word_count(compose_briefing(facts, p))
+
     prose = ask()
 
     # The reading budget was advisory for most of this project: over-length was printed and
     # shipped anyway. It is a stated requirement, so it gets enforced like one.
     #
     # One retry, not a loop. Models overshoot a length target by a fairly stable margin —
-    # asked for 653 words, Claude wrote 713 — and quoting the actual count back closes that
-    # gap in a single pass. A loop would spend money discovering the same thing repeatedly,
+    # asked for 653 words, Claude wrote 713 — and quoting the actual count back is the one
+    # correction worth paying for. A loop would spend money rediscovering the same thing,
     # and a model that ignores the number twice will ignore it five times.
-    written = prose_word_count(compose_briefing(facts, prose))
+    #
+    # The retry runs whether or not the override is set: even when the caller is willing to
+    # ship a long briefing, the shorter one is the better briefing.
+    written = vetted(prose)
     if written > config.MAX_BRIEFING_WORDS:
-        allowance = word_allowance(facts)
         over = written - config.MAX_BRIEFING_WORDS
         prose = ask(
             f"\n\nYour draft came to {written} words once the headings and tables around it "
             f"are counted, which is {over} over the ceiling. Rewrite it at "
-            f"{allowance - over} words or fewer. Cut whole sentences that do not change "
-            f"what the reader would do — do not compress the writing into fragments, and "
-            f"do not drop a recommendation."
+            f"{word_allowance(facts) - over} words or fewer. Cut whole sentences that do not "
+            f"change what the reader would do — do not compress the writing into fragments, "
+            f"and do not drop a recommendation."
         )
-        rewritten = prose_word_count(compose_briefing(facts, prose))
-        if rewritten > config.MAX_BRIEFING_WORDS:
-            raise NarrativeError(
-                f"{provider.info.label} stayed over the reading budget after one rewrite "
-                f"({rewritten} words against a ceiling of {config.MAX_BRIEFING_WORDS}). "
-                "Re-run, or use --no-llm."
+        rewritten = vetted(prose)
+        if rewritten > config.MAX_BRIEFING_WORDS and not allow_over_budget:
+            raise OverReadingBudget(
+                provider.info.label, rewritten, config.MAX_BRIEFING_WORDS
             )
 
-    # The schema guarantees shape; this guarantees the prose is about the SKUs we asked
-    # about. A briefing that silently drops a reorder recommendation is worse than one
-    # that fails loudly.
-    check_against_facts(prose, facts)
     return prose, provider.info.label
 
 
-def write_briefing(facts: dict) -> str:
+def write_briefing(facts: dict, *, allow_over_budget: bool = False) -> str:
     """Produce the finished markdown briefing.
 
     The model writes the prose; `render.py` renders every table and every figure from the
     fact pack. Neither half can produce the document alone, which is the point.
     """
-    prose, _ = write_prose(facts)
+    prose, _ = write_prose(facts, allow_over_budget=allow_over_budget)
     return compose_briefing(facts, prose)

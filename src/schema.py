@@ -81,8 +81,10 @@ BRIEFING_SCHEMA = {
         "tension_notes": {
             "type": "array",
             "description": (
-                "One entry per tension in the fact pack, in the same order. These are the cases "
-                "where the obvious reading of the data and the right decision disagree."
+                "The tensions in the fact pack EXCEPT the first, in order. These are cases "
+                "where the obvious reading of the data and the right decision disagree. The "
+                "first tension is the headline and already has its own section — repeating "
+                "it here says the same thing twice on one page."
             ),
             "items": {
                 "type": "object",
@@ -143,11 +145,17 @@ def check_against_facts(prose: dict, facts: dict) -> None:
             f"  received: {got_queue}"
         )
 
-    expected_tensions = [t["sku"] for t in facts["tensions"]]
+    # Everything except the first: that one is the headline and has its own section.
+    # Before this was pinned, the template omitted it and the model included it, so the
+    # model's briefing named the same SKU twice on one page while the template's did not.
+    # Two paths, one document, two answers — exactly the drift the shared assembler exists
+    # to prevent, hiding in the contract instead of the renderer.
+    expected_tensions = [t["sku"] for t in facts["tensions"][1:]]
     got_tensions = [t["sku"] for t in prose["tension_notes"]]
     if got_tensions != expected_tensions:
         raise BriefingContractError(
-            "tension notes do not match the fact pack.\n"
+            "tension notes do not match the fact pack. Expected every tension except the "
+            "first, which is the headline.\n"
             f"  expected: {expected_tensions}\n"
             f"  received: {got_tensions}"
         )
