@@ -37,7 +37,11 @@ def load_dotenv() -> None:
     env_file = REPO_ROOT / ".env"
     if not env_file.exists():
         return
-    for raw in env_file.read_text(encoding="utf-8").splitlines():
+    # utf-8-sig, not utf-8: Notepad and PowerShell both write a BOM by default on Windows,
+    # and a BOM turns the first line's key into "﻿ANTHROPIC_API_KEY". Nothing matches
+    # it, so the file loads without error and the key silently is not there — which is how
+    # this was found, on a run that quietly used the other provider.
+    for raw in env_file.read_text(encoding="utf-8-sig").splitlines():
         line = raw.strip()
         if not line or line.startswith("#") or "=" not in line:
             continue
@@ -45,10 +49,25 @@ def load_dotenv() -> None:
         os.environ.setdefault(key.strip(), value.strip().strip("\"'"))
 
 
-def _load_prompt() -> str:
+def load_prompt(facts: dict) -> str:
+    """The run-time prompt, with its one figure filled in from the engine.
+
+    `{{WORD_ALLOWANCE}}` is what the model may write once the renderer's headings and
+    fixed phrases are accounted for. Interpolated rather than typed into the file, for the
+    same reason nothing else here is typed: a hand-written 750 sent the model to 755 —
+    exactly on target and still over budget, because the frame costs more than 200 on top.
+
+    `src/service.py` serves the prompt through this function too, so n8n and the CLI get
+    the same instructions with the same figure.
+    """
     if not PROMPT_PATH.exists():
         raise NarrativeError(f"Prompt not found: {PROMPT_PATH}")
-    return PROMPT_PATH.read_text(encoding="utf-8")
+
+    from .render import word_allowance
+
+    return PROMPT_PATH.read_text(encoding="utf-8").replace(
+        "{{WORD_ALLOWANCE}}", str(word_allowance(facts))
+    )
 
 
 def write_prose(facts: dict) -> tuple[dict, str]:
@@ -68,12 +87,48 @@ def write_prose(facts: dict) -> tuple[dict, str]:
         f"```json\n{json.dumps(facts, indent=2)}\n```"
     )
 
-    try:
-        prose = provider.generate(_load_prompt(), user, BRIEFING_SCHEMA)
-    except ProviderError as exc:
-        raise NarrativeError(str(exc)) from exc
-    except json.JSONDecodeError as exc:
-        raise NarrativeError(f"{provider.info.label} returned malformed JSON: {exc}") from exc
+    from . import config
+    from .render import compose_briefing, prose_word_count, word_allowance
+
+    system = load_prompt(facts)
+
+    def ask(extra: str = "") -> dict:
+        try:
+            return provider.generate(system, user + extra, BRIEFING_SCHEMA)
+        except ProviderError as exc:
+            raise NarrativeError(str(exc)) from exc
+        except json.JSONDecodeError as exc:
+            raise NarrativeError(
+                f"{provider.info.label} returned malformed JSON: {exc}"
+            ) from exc
+
+    prose = ask()
+
+    # The reading budget was advisory for most of this project: over-length was printed and
+    # shipped anyway. It is a stated requirement, so it gets enforced like one.
+    #
+    # One retry, not a loop. Models overshoot a length target by a fairly stable margin —
+    # asked for 653 words, Claude wrote 713 — and quoting the actual count back closes that
+    # gap in a single pass. A loop would spend money discovering the same thing repeatedly,
+    # and a model that ignores the number twice will ignore it five times.
+    written = prose_word_count(compose_briefing(facts, prose))
+    if written > config.MAX_BRIEFING_WORDS:
+        allowance = word_allowance(facts)
+        over = written - config.MAX_BRIEFING_WORDS
+        prose = ask(
+            f"\n\nYour draft came to {written} words once the headings and tables around it "
+            f"are counted, which is {over} over the ceiling. Rewrite it at "
+            f"{allowance - over} words or fewer. Cut whole sentences that do not change "
+            f"what the reader would do — do not compress the writing into fragments, and "
+            f"do not drop a recommendation."
+        )
+        rewritten = prose_word_count(compose_briefing(facts, prose))
+        if rewritten > config.MAX_BRIEFING_WORDS:
+            raise NarrativeError(
+                f"{provider.info.label} stayed over the reading budget after one rewrite "
+                f"({rewritten} words against a ceiling of {config.MAX_BRIEFING_WORDS}). "
+                "Re-run, or use --no-llm."
+            )
 
     # The schema guarantees shape; this guarantees the prose is about the SKUs we asked
     # about. A briefing that silently drops a reorder recommendation is worse than one

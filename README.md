@@ -278,10 +278,39 @@ with the most urgent reorder instead of the hardest one. Defensible, but ranking
 engine's job and letting the model choose meant the lead would vary run to run. Fixed in
 the prompt *and* enforced in `check_against_facts()` — prompt for intent, enforce in code.
 
-**What still has not been run:** `providers.py` implements both Anthropic and Google, but
-only the Google path has actually returned a briefing. Both enforce the output schema
-server-side, and the Anthropic request shape is written against the documented API and
-reviewed — but reviewed is not proven, and this section exists to keep that distinction.
+### Both provider paths have now been run, and they are not interchangeable
+
+The Anthropic path was the last thing in here labelled written-but-not-executed. It has
+since been run against `claude-opus-5`, and it works: structured outputs held the schema,
+`check_against_facts` passed, and every figure traced. Same prompt, same schema, same fact
+pack as the Gemini runs.
+
+They do not behave the same, and the differences only showed up by running both:
+
+| | Gemini 3.6 Flash | Claude Opus 5 |
+|---|---|---|
+| Prose length, same instruction | 822–893 words | 960–1011 |
+| Inside the reading budget | yes | **no**, consistently |
+| Held the reorder-queue contract | yes | once returned a seventh, empty entry |
+
+**Claude wrote the better briefing** — it was the run that spotted that both overstocked
+SKUs are 250g lines while everything short is 500g or Bioactive, and named the format
+split. It also would not come in under the ceiling. Told the computed allowance it wrote
+713 words against 653; told its own word count and asked to cut, it returned 961 against
+900. The overshoot is stable, not random.
+
+So the committed briefing is Gemini's, because it is the one that fits the requirement.
+Raising the ceiling to 1,000 would have made Claude's pass, and the ceiling was always a
+proxy I chose rather than a figure the brief states — which is exactly why it is not moving
+now that a result depends on it. Moving a threshold because your output missed it is not a
+calibration.
+
+The other run failed the contract instead of the budget: Claude returned a seventh reorder
+rationale with an empty SKU. `check_against_facts` rejected it. That check was written
+against a hypothetical and has now caught a real one.
+
+**What still has not been run:** nothing. Both paths, the CLI, and the n8n workflow have
+each produced a briefing that passes the same tests.
 
 ---
 

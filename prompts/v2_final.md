@@ -77,11 +77,27 @@ clearer than all of them. Short sentences. No jargon the reader would have to lo
 Every section you write sits between rendered tables, so keep prose tight — a paragraph
 that repeats what the table above it already shows is wasted.
 
-**Budget: under 800 words of prose across the whole briefing.** That is a hard ceiling, not
-a target to approach. The reader has five minutes and the tables carry the detail, so the
-way to stay inside it is to drop sentences that do not change what they would do — not to
-compress writing into fragments. Two or three sentences per rationale is plenty; one is
-often enough for the SKUs further down the queue.
+**Budget: {{WORD_ALLOWANCE}} words across everything you write.** A hard ceiling, not a
+target to approach, and the single easiest thing to get wrong — every section feels worth
+one more sentence, and six of those put you over.
+
+That figure is what is left of the reader's five minutes after the headings and tables
+around your prose are counted. It is computed for this briefing, not a round number.
+
+Roughly how it has to divide:
+
+| | |
+|---|---|
+| Opening line | 1 sentence |
+| Headline: reasoning, decision, capital note | ~140 words total |
+| The top two reorder rationales | ~50 words each |
+| The remaining rationales | **one sentence each** |
+| How the month went | ~70 words |
+| Tensions, noise, closing | ~35 words each |
+
+Stay inside it by cutting sentences that do not change what the reader would do — not by
+compressing writing into fragments or dropping the words that carry meaning. If a sentence
+restates a figure from the table above it, that is the one to cut.
 
 ## Output
 

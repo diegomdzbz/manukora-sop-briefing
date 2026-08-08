@@ -51,6 +51,18 @@ the minute.
 The response was cut off mid-briefing. Either raise `MAX_TOKENS` in `narrative.py` or lower
 `EFFORT` — thinking and response text share that budget. Do not ship a truncated briefing.
 
+### `Narrative layer failed: ... stayed over the reading budget after one rewrite`
+
+The model wrote a briefing longer than the five-minute ceiling, was told its own word count
+and asked to cut, and came back over anyway. The run fails rather than shipping it.
+
+**This is expected on `claude-opus-5` and does not mean anything is broken.** It writes
+960–1,010 words for this document regardless of the allowance it is given, where Gemini
+writes 820–890. If you need the Anthropic path specifically, either accept the shorter
+`--no-llm` render or raise `MAX_BRIEFING_WORDS` in `config.py` — deliberately, and knowing
+that the number is the project's proxy for "readable in five minutes", not a figure the
+brief states.
+
 ### `BriefingContractError: reorder rationales do not match the queue`
 
 The model returned a well-formed briefing that is about the wrong SKUs — it dropped a

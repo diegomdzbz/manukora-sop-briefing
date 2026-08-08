@@ -76,10 +76,22 @@ def prompt() -> dict:
     would drift the first time either was edited. The workflow orchestrates; it does not
     own the instructions.
     """
-    if not PROMPT_PATH.exists():
-        raise HTTPException(status_code=500, detail=f"Prompt not found: {PROMPT_PATH}")
+    from .narrative import NarrativeError, load_prompt
+
+    try:
+        records = load(DEFAULT_DATA)
+    except DataValidationError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    try:
+        # Interpolated, not raw: the prompt's word allowance is computed from the
+        # renderer's overhead, so n8n and the CLI are held to the same figure.
+        system = load_prompt(build_facts(records))
+    except NarrativeError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
     return {
-        "system": PROMPT_PATH.read_text(encoding="utf-8"),
+        "system": system,
         "schema": BRIEFING_SCHEMA,
         "source": "prompts/v2_final.md",
     }

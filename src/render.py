@@ -53,6 +53,38 @@ def _long_date(iso: str) -> str:
     return date.fromisoformat(iso).strftime("%d %B %Y").lstrip("0")
 
 
+def scaffold_word_cost(facts: dict) -> int:
+    """Words this module contributes on its own — headings and fixed connecting phrases.
+
+    Renders the document with every prose field emptied, so what remains is the frame.
+    """
+    empty = template_prose(facts)
+    for key, value in list(empty.items()):
+        if isinstance(value, str):
+            empty[key] = ""
+        elif isinstance(value, dict):
+            empty[key] = dict.fromkeys(value, "")
+        elif isinstance(value, list):
+            empty[key] = [{**e, "rationale" if "rationale" in e else "note": ""} for e in value]
+    empty["headline"]["sku"] = facts["tensions"][0]["sku"] if facts["tensions"] else ""
+    return prose_word_count(compose_briefing(facts, empty))
+
+
+def word_allowance(facts: dict) -> int:
+    """How many words the model may actually write.
+
+    The reading budget covers the finished document, but the model only authors part of
+    it — the rest is this module's headings and connective text. Telling the model the
+    document budget therefore asks for a number it cannot hit: a run instructed to write
+    750 words wrote 755, obediently, and the briefing still came out over because the
+    frame costs 247 on top.
+
+    So the allowance is computed rather than typed. This was the last hand-written figure
+    left in the project, and it was wrong for the same reason every other one was.
+    """
+    return config.MAX_BRIEFING_WORDS - scaffold_word_cost(facts)
+
+
 def prose_word_count(briefing: str) -> int:
     """Words a reader actually reads.
 
