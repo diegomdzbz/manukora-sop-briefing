@@ -5,12 +5,21 @@ executive can read in five minutes and act on.
 
 **→ [The generated briefing](output/sop_briefing_march-2026.md)** · **→ [Part 2 architecture](ARCHITECTURE.md)** · **→ [How it was verified](n8n/VERIFICATION.md)**
 
+> **If you have ten minutes**, read the [briefing](output/sop_briefing_march-2026.md) — it
+> is the deliverable — then [what the AI got wrong](#where-the-ai-helped-where-it-was-wrong-and-what-i-fixed),
+> which is the most honest thing here. Everything else is depth you can skip.
+>
+> **Twenty minutes:** add [`prompts/CHANGELOG.md`](prompts/CHANGELOG.md) for what happened
+> when I ran the naive first prompt, and [`n8n/VERIFICATION.md`](n8n/VERIFICATION.md) for
+> the workflow running end to end.
+
 ![The n8n workflow](n8n/canvas.png)
 
-*The monthly workflow. Two HTTP calls — the fact pack and the prompt — merge before the
-agent writes, because [n8n cannot execute this project's Python](n8n/VERIFICATION.md) and
-the prompt is served rather than copied. Slack is wired and deliberately off; the warning
-on the model node is a missing credential, because the repo ships no keys.*
+*The monthly workflow, which [runs end to end in twenty seconds](n8n/VERIFICATION.md) and
+writes a briefing that passes the same tests as the CLI's. Two HTTP calls — the fact pack
+and the prompt — merge before the model writes, because n8n cannot execute this project's
+Python and the prompt is served rather than copied. Slack is wired and deliberately off.
+Getting it to run surfaced three silent config failures, each documented.*
 
 ---
 
@@ -33,9 +42,13 @@ To have a model write the prose: put a key in `.env` and drop the flag.
 
 | File in `output/` | Written by |
 |---|---|
-| `sop_briefing_march-2026.md` | **A model.** The deliverable |
+| `sop_briefing_march-2026.md` | **A model, via the CLI.** The deliverable |
+| `sop_briefing_from_n8n.md` | **The n8n workflow**, run end to end — see [VERIFICATION](n8n/VERIFICATION.md) |
 | `sop_briefing_march-2026_template.md` | The deterministic template. The control |
-| `facts_march-2026.json` | The engine. Both of the above render from this |
+| `facts_march-2026.json` | The engine. All three render from this |
+
+All three are held to the same tests: no figure without a source, inside the reading
+budget, no cents in prose, leading with the decision the engine ranked first.
 
 **Providers.** The narrative layer takes whichever key is present — `ANTHROPIC_API_KEY`
 first, then `GEMINI_API_KEY`. Both enforce the output schema server-side (Anthropic through
