@@ -33,8 +33,16 @@ services:
       - N8N_SECURE_COOKIE=false
       - GENERIC_TIMEZONE=Pacific/Auckland
       - N8N_DIAGNOSTICS_ENABLED=false
+      # Lets workflow expressions read $env. Off by default in n8n, which is why the
+      # first run of this stack reached the model node with an empty key.
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+      # n8n refuses filesystem writes unless a directory is explicitly allowed. Scoped to
+      # the one mounted directory the workflow writes to, rather than opened up wholesale.
+      - N8N_RESTRICT_FILE_ACCESS_TO=/data/output
       # Read from the host environment. Never hardcode these; see .env.example.
+      # Whichever is set is the one the workflow uses, matching src/providers.py.
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
       - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}
     volumes:
       # n8n's own state (credentials, workflows). Gitignored — it holds secrets.
