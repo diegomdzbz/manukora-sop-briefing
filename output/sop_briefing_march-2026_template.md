@@ -38,6 +38,12 @@ The rest, briefly:
 
 Manuka Honey MGO 263+ 250g carries the range at $59,763 a month, 16.4% of the total opportunity. Bioactive Blend Recovery 250g is the fastest riser at +13.7% month on month. Nothing declined in absolute terms, so "sold poorly" here means falling behind: Manuka Honey MGO 100+ 250g grew +0.8% against a portfolio moving +7.5% — the only SKU not keeping pace, and the one holding the most idle stock.
 
+Units across the period, so the month reads against the run rather than alone:
+
+| December 2025 | January 2026 | February 2026 | March 2026 | Period |
+|---|---|---|---|---|
+| 5,740 | 6,152 | 6,676 | 7,180 | +25.1% |
+
 ## Also worth a decision
 
 - **Propolis Tincture 30ml** — 42 days of cover, running out around 13 May 2026, which falls inside the phase-out window rather than after it. Cover sits above the reorder floor, so the rule says do not reorder. The decision is to confirm the end-of-life date and tell customers, not to buy more stock.
@@ -55,19 +61,23 @@ Place the 5 overdue orders this week and get a decision on the inbound shipment 
 
 ## Every SKU
 
-| SKU | Units | MoM | Cover | Target | Status | Opportunity |
-|---|---|---|---|---|---|---|
-| Manuka Honey MGO 263+ 250g | 1,604 | +5.0% | 4.55 | 2 | Overstocked | $59,763 |
-| Manuka Honey MGO 514+ 250g | 940 | +8.8% | 3.62 | 2 | Fine | $50,440 |
-| Manuka Honey MGO 263+ 500g | 684 | +8.9% | 2.49 | 2 | Order now | $40,308 |
-| Manuka Honey MGO 850+ 250g | 536 | +7.2% | 3.54 | 2 | Fine | $40,034 |
-| Manuka Honey MGO 514+ 500g | 392 | +11.4% | 1.99 | 2 | Below buffer | $34,316 |
-| Manuka Honey MGO 850+ 500g | 244 | +8.9% | 1.8 | 2 | Below buffer | $29,477 |
-| Manuka Honey MGO 100+ 250g | 1,032 | +0.8% | 6.2 | 2 | Overstocked | $26,764 |
-| Bioactive Blend Immunity 250g | 528 | +11.9% | 2.27 | 2 | Fine | $23,554 |
-| Manuka Honey MGO 1700+ 100g | 300 | +13.6% | 2.8 | 3 | Below buffer | $19,857 |
-| Bioactive Blend Energy 250g | 388 | +11.5% | 1.91 | 2 | Below buffer | $17,396 |
-| Bioactive Blend Recovery 250g | 364 | +13.7% | 1.68 | 2 | Below buffer | $16,476 |
-| Propolis Tincture 30ml | 168 | +10.5% | 1.37 | 2 | Phasing out | $6,578 |
+| SKU | Units | MoM | Trend/mo | Cover | Target | Status | Opportunity |
+|---|---|---|---|---|---|---|---|
+| Manuka Honey MGO 263+ 250g | 1,604 | +5.0% | +6.5% | 4.55 | 2 | Overstocked | $59,763 |
+| Manuka Honey MGO 514+ 250g | 940 | +8.8% | +7.3% | 3.62 | 2 | Fine | $50,440 |
+| Manuka Honey MGO 263+ 500g | 684 | +8.9% | +7.2% | 2.49 | 2 | Order now | $40,308 |
+| Manuka Honey MGO 850+ 250g | 536 | +7.2% | +6.8% | 3.54 | 2 | Fine | $40,034 |
+| Manuka Honey MGO 514+ 500g | 392 | +11.4% | +9.3% | 1.99 | 2 | Below buffer | $34,316 |
+| Manuka Honey MGO 850+ 500g | 244 | +8.9% | +9.9% | 1.8 | 2 | Below buffer | $29,477 |
+| Manuka Honey MGO 100+ 250g | 1,032 | +0.8% | +3.8% | 6.2 | 2 | Overstocked | $26,764 |
+| Bioactive Blend Immunity 250g | 528 | +11.9% | +11.6% * | 2.27 | 2 | Fine | $23,554 |
+| Manuka Honey MGO 1700+ 100g | 300 | +13.6% | +10.2% | 2.8 | 3 | Below buffer | $19,857 |
+| Bioactive Blend Energy 250g | 388 | +11.5% | +12.2% * | 1.91 | 2 | Below buffer | $17,396 |
+| Bioactive Blend Recovery 250g | 364 | +13.7% | +13.2% * | 1.68 | 2 | Below buffer | $16,476 |
+| Propolis Tincture 30ml | 168 | +10.5% | +11.9% | 1.37 | 2 | Phasing out | $6,578 |
+
+**MoM** compares March 2026 with February 2026. **Trend/mo** is the average monthly rate across the whole period, so a SKU that climbed steadily reads differently from one that jumped once.
+
+\* Measured from the SKU's first full trading month rather than from December 2025. The Bioactive Blends launched mid-period, and including their partial first month would overstate their growth — which would push them up a ranking driven by projected demand.
 
 Cover is stock on hand divided by March 2026 demand across both channels, which draw on one pooled inventory position. Revenue opportunity is retail price times projected demand for next month. Reorder quantities assume a 2-month supplier lead time — an assumption, not a figure from the data. See OPEN-QUESTIONS.md.

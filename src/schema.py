@@ -157,6 +157,28 @@ def check_against_facts(prose: dict, facts: dict) -> None:
             "the fact pack flags something as noise but the briefing says nothing about it"
         )
 
+    # A SKU with stock already on the water that still lands short is the most important
+    # thing about that SKU, and the easiest fact to leave out — the cover figure alone
+    # reads like an ordinary shortfall. On the first live run the model wrote a generic
+    # rationale for MGO 1700+ and dropped the inbound order entirely, which made the
+    # briefing quieter than the analysis behind it.
+    rationales = {r["sku"]: r["rationale"] for r in prose["reorder_rationales"]}
+    for row in facts["reorder_queue"]:
+        sku = next(s for s in facts["skus"] if s["sku"] == row["sku"])
+        if not sku["inventory"]["has_order_placed"]:
+            continue
+        text = rationales[row["sku"]].lower()
+        units = f"{sku['inventory']['units_on_order']:,}"
+        mentions_inbound = str(units) in text or any(
+            phrase in text for phrase in ("inbound", "in flight", "on order", "already ordered")
+        )
+        if not mentions_inbound:
+            raise BriefingContractError(
+                f"{row['sku']} has {units} units already inbound that still leave it short "
+                f"of target, and the rationale does not mention them. That is the finding "
+                f"for this SKU, not the cover figure."
+            )
+
     # The engine decides what leads, not the model. On the first live run the model chose
     # the most urgent reorder as its headline instead of the hardest decision — a
     # defensible read, but it belongs to the ranking layer. The prompt says so and this

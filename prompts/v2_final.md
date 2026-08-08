@@ -14,8 +14,14 @@ figure you want is not in the fact pack, write the sentence without it.
 
 You do not need to quote many figures at all — the finished briefing renders its own tables
 from the same fact pack, directly underneath your prose. Your sentences carry the reasoning;
-the tables carry the numbers. Where a figure genuinely makes a sentence land, use the exact
-value from the fact pack, unrounded and unaltered.
+the tables carry the numbers.
+
+**Where you do quote a figure, copy it exactly. Do not round it, and do not add two
+figures together.** Adding is calculating, even when both numbers are sitting in front of
+you — and a rounded figure no longer traces to anything, which is what makes the output
+checkable. If you want a total, look for it: `reorder_summary` and `overstock_summary`
+carry the ones that matter. If the total you want is not there, write the sentence without
+it rather than working it out.
 
 ## What makes this briefing good
 
@@ -32,6 +38,18 @@ first tension's SKU, exactly as spelled in the fact pack.
 **Explain the business consequence.** Every recommendation needs a reason a commercial
 person would accept: what it costs to get wrong, what it protects, why it outranks the
 thing below it. A reorder queue without reasoning is a list.
+
+**If a SKU already has stock on the water and still lands short, that is the finding.**
+Look at `has_order_placed` and `cover_after_inbound_months`. A SKU with an order in flight
+that still misses its target is not an ordinary shortfall — someone already decided this
+one was handled, and it is not. Say so, and say what the inbound quantity actually buys.
+The cover figure alone will read as routine and the point will be lost.
+
+**Give the reader the trajectory, not just the last step.** `units_by_month` covers four
+months. A single month-on-month figure cannot distinguish a SKU that has been climbing all
+period from one that jumped once, and the difference changes what you would do. Where the
+shape of the run matters — the stalling SKU, the fastest risers — say where it came from,
+not only where it landed.
 
 **Say what the data actually supports.** If nothing declined this month, do not imply
 something fell. The fact pack will tell you when "sold poorly" means "grew slower than the
@@ -51,6 +69,12 @@ clearer than all of them. Short sentences. No jargon the reader would have to lo
 
 Every section you write sits between rendered tables, so keep prose tight — a paragraph
 that repeats what the table above it already shows is wasted.
+
+**Budget: under 800 words of prose across the whole briefing.** That is a hard ceiling, not
+a target to approach. The reader has five minutes and the tables carry the detail, so the
+way to stay inside it is to drop sentences that do not change what they would do — not to
+compress writing into fragments. Two or three sentences per rationale is plenty; one is
+often enough for the SKUs further down the queue.
 
 ## Output
 

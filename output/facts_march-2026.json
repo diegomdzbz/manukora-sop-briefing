@@ -17,6 +17,11 @@
     "total_units": 5584,
     "revenue_at_stake_usd": 157828.92
   },
+  "overstock_summary": {
+    "sku_count": 2,
+    "total_excess_units": 13628,
+    "total_excess_value_usd": 413483.72
+  },
   "portfolio": {
     "units_by_month": {
       "December 2025": 5740,
@@ -26,6 +31,7 @@
     },
     "current_month_units": 7180,
     "month_on_month_pct": 7.5,
+    "period_growth_pct": 25.1,
     "channel": {
       "shopify_units_by_month": {
         "December 2025": 3472,
@@ -241,6 +247,7 @@
         "reorder_point_breached": false,
         "overstocked": true,
         "phasing_out": false,
+        "phase_out_floor_days": null,
         "needs_reorder": false,
         "deprioritised_reason": null,
         "urgency": "overstocked"
@@ -304,6 +311,7 @@
         "reorder_point_breached": false,
         "overstocked": true,
         "phasing_out": false,
+        "phase_out_floor_days": null,
         "needs_reorder": false,
         "deprioritised_reason": null,
         "urgency": "overstocked"
@@ -367,6 +375,7 @@
         "reorder_point_breached": true,
         "overstocked": false,
         "phasing_out": false,
+        "phase_out_floor_days": null,
         "needs_reorder": true,
         "deprioritised_reason": null,
         "urgency": "act_now"
@@ -430,6 +439,7 @@
         "reorder_point_breached": true,
         "overstocked": false,
         "phasing_out": false,
+        "phase_out_floor_days": null,
         "needs_reorder": false,
         "deprioritised_reason": null,
         "urgency": "healthy"
@@ -493,6 +503,7 @@
         "reorder_point_breached": true,
         "overstocked": false,
         "phasing_out": false,
+        "phase_out_floor_days": null,
         "needs_reorder": true,
         "deprioritised_reason": null,
         "urgency": "critical"
@@ -556,6 +567,7 @@
         "reorder_point_breached": true,
         "overstocked": false,
         "phasing_out": false,
+        "phase_out_floor_days": null,
         "needs_reorder": false,
         "deprioritised_reason": null,
         "urgency": "healthy"
@@ -619,6 +631,7 @@
         "reorder_point_breached": true,
         "overstocked": false,
         "phasing_out": false,
+        "phase_out_floor_days": null,
         "needs_reorder": true,
         "deprioritised_reason": null,
         "urgency": "critical"
@@ -682,6 +695,7 @@
         "reorder_point_breached": true,
         "overstocked": false,
         "phasing_out": false,
+        "phase_out_floor_days": null,
         "needs_reorder": true,
         "deprioritised_reason": null,
         "urgency": "critical"
@@ -745,6 +759,7 @@
         "reorder_point_breached": true,
         "overstocked": false,
         "phasing_out": true,
+        "phase_out_floor_days": 30,
         "needs_reorder": false,
         "deprioritised_reason": "Phasing out in Q2 2026; reorder only below 30 days of cover",
         "urgency": "critical"
@@ -808,6 +823,7 @@
         "reorder_point_breached": true,
         "overstocked": false,
         "phasing_out": false,
+        "phase_out_floor_days": null,
         "needs_reorder": false,
         "deprioritised_reason": null,
         "urgency": "healthy"
@@ -871,6 +887,7 @@
         "reorder_point_breached": true,
         "overstocked": false,
         "phasing_out": false,
+        "phase_out_floor_days": null,
         "needs_reorder": true,
         "deprioritised_reason": null,
         "urgency": "critical"
@@ -934,6 +951,7 @@
         "reorder_point_breached": true,
         "overstocked": false,
         "phasing_out": false,
+        "phase_out_floor_days": null,
         "needs_reorder": true,
         "deprioritised_reason": null,
         "urgency": "critical"
