@@ -3,51 +3,87 @@
 Turns four months of SKU-level sales and inventory data into a monthly S&OP briefing an
 executive can read in five minutes and act on.
 
-Built as a practical exercise. Part 1 (this build) is below; Part 2 (the Morning Intelligence
-Brief architecture) is in [`ARCHITECTURE.md`](ARCHITECTURE.md).
-
----
-
-## Status
-
-Work in progress. Sections land as their branches merge — see the commit history.
-
-- [x] Scaffold, mock data, build instructions
-- [x] Calculation engine
-- [x] Tests and CI
-- [ ] Narrative layer
-- [ ] Output integrity checks
-- [ ] n8n orchestration
-- [ ] Final briefing and documentation
-
----
-
-## The idea in one paragraph
-
-The maths happens in Python, is covered by tests, and is serialised to `facts.json`. The
-language model receives those facts and writes the prose around them — it never calculates
-anything. That split is what makes the output checkable: `tests/test_output_integrity.py`
-asserts that every figure in the generated briefing traces back to a computed fact. See
-[`CLAUDE.md`](CLAUDE.md) for the rules this repo is built under.
+**→ [The generated briefing](output/sop_briefing_march-2026.md)** · **→ [Part 2 architecture](ARCHITECTURE.md)**
 
 ---
 
 ## Quick start
 
 ```bash
-git clone <this repo>
+git clone https://github.com/diembz/manukora-sop-briefing
 cd manukora-sop-briefing
 pip install -r requirements.txt
 
-# Full briefing, no API key required
-python -m src.main --no-llm
+python -m src.main --no-llm    # complete briefing, no API key required
+python -m pytest -q            # 50 tests
 ```
 
-The prompt stack and verification notes follow as the build lands.
+`--no-llm` renders the whole briefing from a deterministic template — same figures, plainer
+prose. Nothing in this repo needs a key to run, and the finished briefing is committed, so
+you can evaluate the output without running anything at all.
+
+To have the model write the prose instead: copy `.env.example` to `.env`, add an Anthropic
+key, and drop the flag.
 
 ---
 
-## Business rules taken from the brief
+## The idea
+
+**The language model never does arithmetic.**
+
+Every number is computed in Python, covered by a test, and serialised to `facts.json`. The
+model receives those facts and writes prose around them — it cannot calculate, estimate, or
+infer a figure, because [the schema it must satisfy](src/schema.py) has no numeric field at
+all.
+
+That split is what makes the output checkable. `tests/test_output_integrity.py` extracts
+every figure from the finished briefing and asserts each one traces back to a computed
+fact; an invented number fails the build.
+
+```
+data/mock_sales.csv
+      │
+      ▼
+  engine.py ──────────────► facts.json ──────┬──► narrative.py (model writes prose)
+  every calculation,                          │
+  every business rule,                        └──► render.py   (template writes prose)
+  covered by tests                                     │
+                                                       ▼
+                                            compose_briefing()
+                                        one assembler, tables from facts
+```
+
+Both paths load the same prompt and render through the same assembler, so they cannot drift
+into producing different documents — and the template render doubles as a control on the
+model's.
+
+---
+
+## What the briefing actually says
+
+Not a summary of the spreadsheet. Three findings drove the recommendations:
+
+**The weakest seller is where the capital is stuck.** MGO 100+ 250g grew +0.8% against a
+range moving +7.5% — the only SKU not keeping pace — while holding 6.2 months of cover
+against a 2-month target, with 2,000 more units inbound that take it to 7.14. The
+recommendation is not to reorder. It is to hold that shipment and move the working capital
+to the six SKUs that are actually short.
+
+**An order in flight does not settle the question.** MGO 1700+ 100g has stock on the water
+and still lands at 2.13 months against its 3-month target. Treating "an order exists" as
+"handled" would have dropped it from the queue entirely.
+
+**The reorder trigger accounts for lead time.** Firing when cover falls below target means
+the replenishment arrives two months after the buffer was already breached. Triggering at
+`target + lead time` surfaces MGO 263+ 500g — above target today, and unrecoverable if you
+wait for it to dip.
+
+The queue totals 5,584 units across 6 SKUs, 5 of them already past the date they should
+have been placed.
+
+---
+
+## Business rules from the brief
 
 All of these live in [`src/config.py`](src/config.py), tagged `BRIEF` where the exercise
 states them and `ASSUMPTION` where it does not.
@@ -55,80 +91,164 @@ states them and `ASSUMPTION` where it does not.
 | Rule | How it is handled |
 |---|---|
 | M1 is December 2025, M4 is March 2026 | The output names months. `M4` is a column header, not something an executive should translate |
-| Bioactive Blends launched mid-January | Their trend is measured from January onward. Including December would inflate growth on an artefact of the launch date and push them up the ranking |
-| Propolis Tincture 30ml is phasing out in Q2 2026 | Flagged for stockout risk, but not reordered unless cover drops below 30 days |
-| MGO 1700+ 100g targets 3 months of cover | Declared in config and cross-checked against the dataset on load |
+| Bioactive Blends launched mid-January | Trend measured from January. December would inflate their growth on an artefact of the launch date |
+| Propolis Tincture is phasing out in Q2 2026 | Flagged for stockout risk, not reordered above 30 days of cover |
+| MGO 1700+ 100g targets 3 months | Declared in config and cross-checked against the dataset on load |
 | March demand is the sell-through baseline | Cover is stock divided by March units |
-| Shopify and Amazon pool one inventory position | Demand is the sum of both channels everywhere a cover or reorder figure is derived |
-| `Order_Arrival_Months = 0` means no order exists | Treated as "nothing inbound", never as "arrives immediately" |
+| Shopify and Amazon pool one inventory | Demand is the sum of both channels everywhere |
+| `Order_Arrival_Months = 0` means no order | Treated as "nothing inbound", never "arrives immediately" |
+
+Each has a test that fails on the *wrong* reading, not just one that passes on the right
+one — see [verification](#how-i-verified-it).
 
 ## Assumptions I made
 
 The brief is silent on these. Each is declared in `config.py` and listed in
-[`OPEN-QUESTIONS.md`](OPEN-QUESTIONS.md) as something I would confirm before anyone acts on
-the output.
+[`OPEN-QUESTIONS.md`](OPEN-QUESTIONS.md) with the reasoning and what would change if the
+answer differs.
 
-- **Supplier lead time is 2 months, and 3 months for MGO 1700+ 100g.** Not in the data.
-  Inferred from `Order_Arrival_Months`, where confirmed shipments land 1–2 months out; the
-  brief says MGO 1700+ has longer lead times. This drives every reorder quantity and date,
-  so it is the first thing to check.
-- **Reorder when cover falls below target *plus* lead time.** Ordering at the target itself
-  means the stock lands two months after the buffer was already breached.
-- **Target cover is the buffer wanted on arrival**, so a reorder covers lead time and target
-  rather than target alone.
-- **Overstocked means more than twice the target.** A threshold, chosen to flag outliers
-  rather than SKUs a few weeks above plan.
-- **"Sold poorly" means falling behind the portfolio.** Nothing declined in absolute terms
-  this month, so the honest reading is relative, and the briefing says so explicitly rather
-  than implying a decline that did not happen.
+- **Supplier lead time is 2 months, 3 for MGO 1700+.** Not in the data; inferred from
+  `Order_Arrival_Months`. This drives every quantity and every date, so it is the first
+  thing to confirm.
+- **Reorder when cover falls below target *plus* lead time**, not at the target itself.
+- **Target cover is the buffer wanted on arrival**, so a reorder covers transit and target.
+- **"Overstocked" is more than twice the target** — a threshold, chosen to flag outliers.
+- **"Sold poorly" means falling behind the range.** Nothing declined this month, so the
+  briefing says that plainly rather than implying a fall that did not happen.
+
+---
+
+## Approach and tradeoffs
+
+**Deterministic engine, model only for prose.** Costs a schema and an assembler. Buys an
+output that can be tested, a briefing that runs with no key, and the ability to say "the
+figures are correct" and mean it. The alternative — one prompt, one call — is a third of the
+code and cannot be verified without recomputing every figure by hand, every month.
+
+**Structured outputs over free text.** The model returns a schema-validated object, so a
+briefing cannot come back missing the tension section or with a recommendation that has no
+rationale. Costs some flexibility in how the model can organise its answer; buys a document
+whose shape is guaranteed before anyone reads it.
+
+**No SQL in Part 1.** A twelve-row CSV does not need a database, and adding one would be
+the overbuilding the brief warns against. It belongs in Part 2, where a *daily* brief
+genuinely needs snapshot tables to answer "what changed overnight". Stated here so it reads
+as a decision rather than an omission.
+
+**Reading budget counts prose, not table cells.** Table rows are scanned column by column,
+not read as sentences; counting them against a five-minute budget would penalise exactly
+the format that makes a briefing fast.
+
+**Depth where the money is.** The top two recommendations get a full paragraph of reasoning,
+the rest get one clause each. Six equal paragraphs would bury the two that matter.
+
+---
+
+## The prompt stack
+
+There are two, and both are in the repo.
+
+| | Where | What it does |
+|---|---|---|
+| **Build-time** | [`CLAUDE.md`](CLAUDE.md), [`prompts/build-stack.md`](prompts/build-stack.md) | How this repo was built with Claude Code |
+| **Run-time** | [`prompts/v1_baseline.md`](prompts/v1_baseline.md) → [`v2_final.md`](prompts/v2_final.md) | How a briefing gets written each month |
+
+**The first prompt** handed the model the raw CSV and asked for a briefing. **The one I
+actually use** hands it a fact pack with every figure already computed and asks only for
+prose.
+
+That is not a wording improvement — it is a different architecture, and it is the reason
+the change was necessary: v1's failure mode is that correct output and confident-but-wrong
+output look identical to the reader. No instruction fixes that. Its last line was "make sure
+your numbers are accurate", which is the tell — an instruction you cannot check is a hope.
+
+Full change-by-change account in [`prompts/CHANGELOG.md`](prompts/CHANGELOG.md).
+
+---
+
+## Where the AI helped, where it was wrong, and what I fixed
+
+**Where it helped:** drafting the engine and the test suite quickly, and — more usefully —
+five structured review passes over the design before any code existed. Each pass used a
+different lens and each found something the last could not. The fourth asked "would this
+actually run?" and found that n8n cannot execute the Python: the container has no
+interpreter and no access to the host repo, so the central arrow in my own diagram had
+nothing behind it.
+
+**Where it was wrong, with the fixes:**
+
+**It fabricated two figures.** The design document claimed one SKU was "22% of total revenue
+opportunity" and another needed "~1,150 units". Checked against the engine: 16.6% and 934.
+Both plausible, both wrong, both written into the document that proposed a test against
+exactly this failure. That produced the no-hand-typed-figures rule in `CLAUDE.md` and
+`tests/test_output_integrity.py` — which is not a hypothetical guard against model
+hallucination but a response to a failure that already happened here.
+
+**It got the reorder trigger wrong**, firing when cover fell below target — two months too
+late on a two-month lead time. Fixed to the standard reorder point, which surfaced a SKU
+the original logic missed entirely.
+
+**It wrote a sentence that was confidently false**, saying an order placed today "lands
+around 16 June, which is roughly when the shelf empties" — that date was the stockout, not
+the arrival. Fixed by computing both dates separately so the sentence has to name which is
+which.
+
+**It picked the wrong headline**, leading with the SKU holding the most capital rather than
+the one with the hardest decision. A fast-selling product that is merely over-covered is a
+scheduling question; a stalled one is a capital question.
+
+**What has not been run:** no Anthropic API key was available, so `narrative.py` is written
+and reviewed but never executed end to end. The committed briefing is the deterministic
+render. This is recorded rather than smoothed over — a repo that overstates what it ran is
+worse than one that ran less.
 
 ---
 
 ## How I verified it
 
 ```bash
-python -m pytest -q     # 42 tests
+python -m pytest -q     # 50 tests
 ```
 
-The suite is split by what it protects.
+**The maths.** `tests/test_business_rules.py` has one test per rule the brief states, and
+where possible each also demonstrates what the *wrong* reading produces. Reading
+`Order_Arrival_Months = 0` as "arrives now" would credit SKUs with stock they do not have
+and empty the queue of exactly the SKUs needing attention — that is asserted, not assumed.
+`tests/test_engine.py` pins reference totals worked out by hand before the engine existed,
+and covers what is easy to get subtly wrong: growth compounds rather than averaging, and
+cover-after-arrival subtracts the demand consumed while the shipment is in transit.
 
-**`tests/test_business_rules.py`** — one test per rule the brief states about reading this
-data. Where it can, each test also demonstrates what the *wrong* reading produces, so it
-documents the trap rather than only guarding against it. Three worth calling out:
+**The output.** `tests/test_output_integrity.py` asserts every figure in the briefing traces
+to `facts.json`, and — because a test that cannot fail proves nothing — separately proves it
+catches an invented figure and proves it does not fire on SKU names, dates, or years.
 
-- Anchoring Bioactive Blends to December inflates their growth, which inflates projected
-  demand, which inflates revenue opportunity — and revenue opportunity is what ranks the
-  reorder queue. The wrong baseline does not just misreport a trend, it reorders the
-  recommendations. The test asserts that.
-- Reading `Order_Arrival_Months = 0` as "arrives immediately" would credit SKUs with stock
-  they do not have and empty the queue of exactly the SKUs that need attention.
-- Measuring cover against one channel instead of the pooled position roughly doubles every
-  cover figure. MGO 850+ 500g is at 1.8 months pooled and would read over 3 months on
-  Shopify alone — comfortably clearing its target while genuinely running out.
-
-**`tests/test_engine.py`** — arithmetic and ranking. Reference totals were worked out by
-hand from the dataset before the engine existed and are pinned, so a change that alters a
-published figure fails rather than quietly producing a different briefing. It also checks
-the things that are easy to get subtly wrong: growth compounds rather than averaging;
-cover-after-arrival subtracts the demand consumed while the shipment is in transit; the
-queue is ordered by revenue and *not* by who runs out first.
-
-CI runs the suite, regenerates the briefing with no API key, and fails if the committed
-output no longer matches what the code produces.
+**Reproducibility.** CI runs the suite with no secrets, regenerates the briefing without an
+API key, and fails if the committed output drifts from what the code produces.
 
 ---
 
 ## Repository layout
 
-| Path | What it holds |
+| Path | |
 |---|---|
-| `data/` | The mock dataset |
-| `src/` | Engine, narrative layer, CLI |
-| `prompts/` | The run-time prompt stack and its changelog |
-| `tests/` | Business-rule and output-integrity tests |
-| `output/` | The generated briefing and its fact pack |
-| `n8n/` | Workflow export and canvas screenshot |
-| `skills/` | Reusable procedure for running and adapting this |
-| `CLAUDE.md` | Build-time instruction stack |
-| `RUNBOOK.md` | What breaks and how to fix it |
-| `OPEN-QUESTIONS.md` | What I would have asked the stakeholder on day one |
+| [`data/`](data/) | The mock dataset from the brief, verbatim |
+| [`src/`](src/) | Config, loader, engine, schema, narrative, renderer, CLI |
+| [`prompts/`](prompts/) | Both prompt stacks and the changelog |
+| [`tests/`](tests/) | Business rules, arithmetic, output integrity |
+| [`output/`](output/) | The generated briefing and its fact pack |
+| [`n8n/`](n8n/) | Workflow export and canvas screenshot |
+| [`skills/`](skills/) | Reusable procedure for running and adapting this |
+| [`CLAUDE.md`](CLAUDE.md) | Build-time instructions and the rules this repo runs under |
+| [`RUNBOOK.md`](RUNBOOK.md) | What breaks and how to fix it |
+| [`OPEN-QUESTIONS.md`](OPEN-QUESTIONS.md) | What I would have asked before anyone acts on this |
+
+---
+
+## What I would do next
+
+Connect the real sources. The engine takes a validated table; swapping the CSV loader for
+Shopify and SP-API clients does not touch the calculations or the tests.
+
+Then add the previous year. Four months cannot separate growth from season, and every
+projection here extrapolates a four-month trend — the ranking is fairly robust to that, but
+the absolute figures deserve less confidence than they currently invite.
