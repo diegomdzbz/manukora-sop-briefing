@@ -70,9 +70,9 @@ def template_prose(facts: dict) -> dict:
     tensions = facts["tensions"]
     skus = {s["sku"]: s for s in facts["skus"]}
     perf = facts["performance"]
+    summary = facts["reorder_summary"]
 
     top = tensions[0] if tensions else None
-    overdue = [r for r in queue if r["is_overdue"]]
 
     return {
         "opening_line": (
@@ -87,11 +87,11 @@ def template_prose(facts: dict) -> dict:
             "reasoning": top["detail"] if top else "",
         },
         "capital_note": (
-            f"{len(queue)} SKUs need orders totalling "
-            f"{_units(sum(r['quantity_units'] for r in queue))} units, "
-            f"{len(overdue)} of them already overdue. The capital is at the wrong end of the "
-            f"range: sitting on stock that has stopped moving while the SKUs that are moving "
-            f"run thin."
+            f"{summary['sku_count']} SKUs need orders totalling "
+            f"{_units(summary['total_units'])} units, "
+            f"{summary['overdue_count']} of them already overdue. The capital is at the wrong "
+            f"end of the range: sitting on stock that has stopped moving while the SKUs that "
+            f"are moving run thin."
         )
         if queue
         else "",
@@ -108,10 +108,10 @@ def template_prose(facts: dict) -> dict:
             f"{n['topic']}: {n['finding']} {n['why_ignore']}" for n in facts["noise"]
         ),
         "closing_action": (
-            f"Place the {len(overdue)} overdue orders this week and get a decision on the "
-            f"inbound shipment flagged above before it lands."
+            f"Place the {summary['overdue_count']} overdue orders this week and get a decision "
+            f"on the inbound shipment flagged above before it lands."
         )
-        if overdue
+        if summary["overdue_count"]
         else "Review the reorder queue before the next cycle.",
     }
 

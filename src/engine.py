@@ -323,6 +323,18 @@ def build_facts(records: list[SkuRecord]) -> dict:
         )
     ]
 
+    # Totals the briefing quotes in prose. Computed here rather than in the renderer so
+    # that every figure in the finished document traces back to this file — the renderer
+    # formats numbers, it does not produce them.
+    reorder_summary = {
+        "sku_count": len(reorder_queue),
+        "overdue_count": sum(1 for r in reorder_queue if r["is_overdue"]),
+        "total_units": sum(r["quantity_units"] for r in reorder_queue),
+        "revenue_at_stake_usd": round(
+            sum(r["revenue_opportunity_usd"] for r in reorder_queue), 2
+        ),
+    }
+
     return {
         "meta": {
             "reporting_month": config.MONTH_LABELS[config.CURRENT_MONTH],
@@ -331,6 +343,7 @@ def build_facts(records: list[SkuRecord]) -> dict:
             "planning_date": config.PLANNING_DATE.isoformat(),
             "sku_count": len(skus),
         },
+        "reorder_summary": reorder_summary,
         "portfolio": {
             **portfolio,
             "total_revenue_opportunity_usd": total_revenue_opportunity,
