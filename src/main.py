@@ -62,7 +62,13 @@ def main(argv: list[str] | None = None) -> int:
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     facts_path = args.output_dir / f"facts_{month_slug}.json"
-    facts_path.write_text(json.dumps(facts, indent=2) + "\n", encoding="utf-8")
+    # newline="\n" everywhere this project writes a file. Without it, Python translates
+    # to CRLF on Windows and the committed artefacts stop being byte-identical across
+    # platforms: a reviewer on Windows regenerates the briefing, gets the same content,
+    # and git reports both files modified. The output is committed precisely so it can be
+    # compared, so it has to be reproducible on the reviewer's machine rather than only
+    # on the one that made it.
+    facts_path.write_text(json.dumps(facts, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"Fact pack written to {facts_path}")
 
     if args.facts_only:
@@ -92,7 +98,7 @@ def main(argv: list[str] | None = None) -> int:
     # and diffs, since only it is deterministic.
     suffix = "_template" if args.no_llm else ""
     briefing_path = args.output_dir / f"sop_briefing_{month_slug}{suffix}.md"
-    briefing_path.write_text(briefing, encoding="utf-8")
+    briefing_path.write_text(briefing, encoding="utf-8", newline="\n")
     words = prose_word_count(briefing)
     budget = "within" if words <= config.MAX_BRIEFING_WORDS else "OVER"
     print(

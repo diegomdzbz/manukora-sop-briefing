@@ -26,7 +26,7 @@ cd manukora-sop-briefing
 pip install pytest              # the only dependency, and only for the tests
 
 python -m src.main --no-llm     # complete briefing, no API key required
-python -m pytest -q             # 60 tests, no secrets needed
+python -m pytest -q             # 61 tests, no secrets needed
 ```
 
 `--no-llm` renders the whole briefing from a deterministic template — same figures, plainer
@@ -233,7 +233,7 @@ each produced a briefing that passes the same tests.
 ## How I verified it
 
 ```bash
-python -m pytest -q     # 60 tests
+python -m pytest -q     # 61 tests
 ```
 
 **The maths.** `tests/test_business_rules.py` has one test per rule, and where possible each
@@ -273,6 +273,34 @@ API key, and fails if the committed output drifts from the code.
 | [`OPEN-QUESTIONS.md`](OPEN-QUESTIONS.md) | What I would have asked before anyone acts on this |
 
 ---
+
+## What I would do differently
+
+**I planned too much and tested too late.** The design went through several review passes
+before any code existed, and three of the things those passes eventually found would have
+surfaced in twenty minutes of writing a first version. The clearest case is the one that
+changed the architecture: *n8n cannot execute this project's Python.* That took a careful
+fourth reading of my own plan to notice. It also takes ten seconds to check —
+
+```bash
+docker run --rm n8nio/n8n which python3
+```
+
+A cheap experiment beats a careful reading, and I had the ratio backwards.
+
+**The v1 baseline should have been the first thing I ran, not one of the last.** It is the
+strongest evidence in this repository — a naive prompt recommending an emergency reorder of
+a discontinued product — and it arrived near the end, as a way of proving something I had
+already decided. Run first, its failures would have *been* the specification: I would not
+have had to reason about which rules a model gets wrong, because it would have shown me.
+
+**The reading budget was my own invention, and I let it cost more than it was worth.** The
+brief asks for five minutes; the 900-word ceiling is a proxy I chose and never validated,
+then enforced with a retry mechanism when a provider overshot it. Measuring once what five
+minutes actually means would have been cheaper than building around a number I made up.
+
+Declining to raise that ceiling once a result depended on it was still right. Setting it so
+firmly, so early, without checking it, was not.
 
 ## What I would do next
 

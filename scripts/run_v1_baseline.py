@@ -69,6 +69,7 @@ def main() -> int:
         f"     what it got wrong. Model: {model}, the same one the production path uses. -->\n\n"
         + text,
         encoding="utf-8",
+        newline="\n",
     )
     print(f"Wrote {out.relative_to(REPO_ROOT)} ({len(text.split())} words)")
     return 0

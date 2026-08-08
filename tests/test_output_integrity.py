@@ -342,6 +342,25 @@ def test_thousands_are_published_for_every_money_figure(facts):
     walk(facts)
 
 
+def test_committed_output_uses_unix_line_endings():
+    """The committed artefacts must be byte-identical on any machine that regenerates them.
+
+    Python translates `\\n` to CRLF on Windows unless told otherwise, so without an explicit
+    `newline="\\n"` the output written on Windows differs from the output written on Linux —
+    same content, different bytes. A reviewer on Windows would regenerate the briefing, get
+    exactly the same text, and see git report both files modified.
+
+    That matters because the output is committed *so that it can be compared*. Reproducible
+    on the machine that made it is not the claim; reproducible on the reviewer's is.
+    """
+    for path in sorted((REPO_ROOT / "output").glob("*")):
+        raw = path.read_bytes()
+        assert b"\r\n" not in raw, (
+            f"{path.name} has CRLF line endings. Whatever wrote it needs newline='\\n' — "
+            "see src/main.py."
+        )
+
+
 def test_briefing_carries_no_column_codes(facts):
     """M1-M4 belong to the dataset, not to the reader."""
     briefing = render_briefing(facts)
