@@ -132,11 +132,62 @@ Fixed in two places: `v2_final.md` now says the headline is the first entry in `
 and `check_against_facts()` rejects a briefing that leads with anything else. Prompt for
 intent, enforce in code.
 
-## What has still not been run
+## What v1 produced when it was actually run
 
-**v1 was never executed.** Its critique above is reasoning about the design, not a
-transcript of a recorded A/B run, and it is labelled that way rather than dressed up as
-one.
+The critique above was written before running it. Then it was run — same model as the
+production path, so the prompt is the only variable — and the output is committed at
+[`v1_baseline_output.md`](v1_baseline_output.md). Reproduce with
+`python scripts/run_v1_baseline.py`.
+
+**Give it credit first.** v1 is not obviously bad. It correctly applied the MGO 1700+
+three-month target, correctly read `Order_Arrival_Months = 0` as "no order placed", got
+every cover figure right to two decimals, ranked by revenue opportunity using projected
+rather than current demand, and produced a well-organised document. Anyone skimming it
+would file it as competent work.
+
+**Then look at what it recommends for Propolis Tincture 30ml:**
+
+> *"Stock cover is at a critical 1.37 months. Issue an immediate emergency batch order of
+> 500 units."*
+
+That product is being discontinued this quarter. The brief says so, and says not to reorder
+it above 30 days of cover — it has 42. v1 never mentions the phase-out anywhere in the
+document. It recommends buying inventory for a line that is being retired, and it uses the
+word *emergency* to do it.
+
+**And the trend section, which the brief asked for by name, has arithmetic errors:**
+
+| | Actual | v1 | |
+|---|---|---|---|
+| December 2025 | 5,740 | 5,740 | ✓ |
+| January 2026 | 6,152 | **6,104** | off by 48 |
+| February 2026 | 6,676 | **6,556** | off by 120 |
+| March 2026 | 7,180 | 7,180 | ✓ |
+
+The two months it was not given as anchors are the two it got wrong. Nothing on the page
+distinguishes them from the two it got right.
+
+**Three more, briefly:**
+
+- **Reorder quantities are round numbers, not calculations.** 2,000 units where the formula
+  gives 1,232; 1,200 where it gives 936. No lead time, no target buffer — just plausible
+  figures.
+- **Bioactive Blends are trended from December**, their partial launch month, inflating the
+  growth that drives projected demand and therefore the ranking.
+- **The tension the brief explicitly asks for is missed.** v1 labels MGO 100+ 250g
+  "HEALTHY — Overstocked" with 6.20 months of cover, notes the 2,000 units inbound in a
+  table cell, and recommends nothing. The single most valuable observation in this dataset
+  is present as a data point and absent as a decision.
+
+**The point is not that v1 made mistakes.** It is that its mistakes are invisible. Correct
+figures and wrong ones are formatted identically, and the one recommendation that would
+actually lose money is the most confidently worded sentence in the document. There is no
+prompt wording that fixes that — only moving the arithmetic somewhere it can be tested.
+
+That is the argument for everything else in this repository, and it is now an observation
+rather than a prediction.
+
+## What has still not been run
 
 **The Anthropic path was not exercised.** `providers.py` implements both; the live run used
 Gemini, because that was the key available. Both enforce the schema server-side — Anthropic
