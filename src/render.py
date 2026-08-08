@@ -26,7 +26,19 @@ from . import config
 
 
 def _usd(value: float) -> str:
+    """Exact, for tables. A reader scanning a column wants the figure."""
     return f"${value:,.0f}"
+
+
+def _usd_k(value: float) -> str:
+    """Rounded to thousands, for prose. A reader in a sentence wants the magnitude.
+
+    "$413k" reads; "$413,483.72" stops the eye and tells an executive nothing they can act
+    on. The engine publishes both forms — see `_add_thousands` — so the readable one still
+    traces back to a computed fact and the integrity check still holds.
+    """
+    k = value / 1000
+    return f"${k:,.0f}k" if abs(k) >= 100 else f"${k:,.1f}k"
 
 
 def _units(value: int) -> str:
@@ -79,7 +91,7 @@ def template_prose(facts: dict) -> dict:
             f"{_units(portfolio['current_month_units'])} units sold, "
             f"{_pct(portfolio['month_on_month_pct'])} against {facts['meta']['prior_month']}. "
             f"Forward revenue opportunity across the range is "
-            f"{_usd(portfolio['total_revenue_opportunity_usd'])} a month."
+            f"{_usd_k(portfolio['total_revenue_opportunity_usd'])} a month."
         ),
         "headline": {
             "sku": top["sku"] if top else "",
@@ -149,7 +161,7 @@ def _template_performance(facts: dict, skus: dict, perf: dict, portfolio: dict) 
 
     text = (
         f"{best['sku']} carries the range at "
-        f"{_usd(best['money']['revenue_opportunity_usd'])} a month, "
+        f"{_usd_k(best['money']['revenue_opportunity_usd'])} a month, "
         f"{best['money']['share_of_portfolio_opportunity_pct']}% of the total opportunity. "
         f"{fastest['sku']} is the fastest riser at "
         f"{_pct(fastest['trend']['month_on_month_pct'])} month on month."

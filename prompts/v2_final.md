@@ -16,12 +16,19 @@ You do not need to quote many figures at all — the finished briefing renders i
 from the same fact pack, directly underneath your prose. Your sentences carry the reasoning;
 the tables carry the numbers.
 
-**Where you do quote a figure, copy it exactly. Do not round it, and do not add two
-figures together.** Adding is calculating, even when both numbers are sitting in front of
-you — and a rounded figure no longer traces to anything, which is what makes the output
-checkable. If you want a total, look for it: `reorder_summary` and `overstock_summary`
-carry the ones that matter. If the total you want is not there, write the sentence without
-it rather than working it out.
+**Never do arithmetic on a figure, including rounding it yourself.** Adding two numbers is
+calculating even when both are in front of you, and a figure you rounded no longer traces
+to anything — which is what makes this output checkable. If you want a total, look for it:
+`reorder_summary` and `overstock_summary` carry the ones that matter. If the total you want
+is not there, write the sentence without it rather than working it out.
+
+**For money in prose, use the `_k` field, not the `_usd` one.** Every money figure is
+published both ways: `revenue_opportunity_usd: 40307.67` alongside
+`revenue_opportunity_k: 40.308`. Write the `_k` value as `$40.3k` — one decimal below a
+hundred, none above it, so `413.484` becomes `$413k`. Nobody reads cents in a sentence, and
+the rounding is already done for you, so quoting the rounded form is still quoting rather
+than calculating. The tables below your prose carry the exact figures for anyone who wants
+them.
 
 ## What makes this briefing good
 

@@ -1,6 +1,6 @@
 # S&OP Briefing — March 2026
 
-7,180 units sold, +7.5% against February 2026. Forward revenue opportunity across the range is $364,963 a month.
+7,180 units sold, +7.5% against February 2026. Forward revenue opportunity across the range is $365k a month.
 
 ## The decision this month
 
@@ -36,7 +36,7 @@ The rest, briefly:
 
 ## How March 2026 went
 
-Manuka Honey MGO 263+ 250g carries the range at $59,763 a month, 16.4% of the total opportunity. Bioactive Blend Recovery 250g is the fastest riser at +13.7% month on month. Nothing declined in absolute terms, so "sold poorly" here means falling behind: Manuka Honey MGO 100+ 250g grew +0.8% against a portfolio moving +7.5% — the only SKU not keeping pace, and the one holding the most idle stock.
+Manuka Honey MGO 263+ 250g carries the range at $59.8k a month, 16.4% of the total opportunity. Bioactive Blend Recovery 250g is the fastest riser at +13.7% month on month. Nothing declined in absolute terms, so "sold poorly" here means falling behind: Manuka Honey MGO 100+ 250g grew +0.8% against a portfolio moving +7.5% — the only SKU not keeping pace, and the one holding the most idle stock.
 
 Units across the period, so the month reads against the run rather than alone:
 

@@ -293,6 +293,31 @@ def analyse_portfolio(records: list[SkuRecord]) -> dict:
 # --------------------------------------------------------------------------------------
 
 
+def _add_thousands(node):
+    """Alongside every `*_usd` figure, publish the same value in thousands as `*_k`.
+
+    Executives do not read cents. But the integrity check matches a quoted figure against
+    the fact pack at the precision it was displayed, so a briefing saying "$413k" needs
+    413 to exist as a fact — otherwise the readable form is indistinguishable from an
+    invented one.
+
+    Publishing both keeps the two goals from trading off: prose quotes the rounded form and
+    stays readable, tables carry the exact form, and every figure in either still traces.
+    Rounding stays a rendering choice made from data the engine produced, not arithmetic
+    the model did on its own.
+    """
+    if isinstance(node, dict):
+        for key, value in list(node.items()):
+            if key.endswith("_usd") and isinstance(value, (int, float)) and not isinstance(value, bool):
+                node[key[: -len("_usd")] + "_k"] = round(value / 1000, 3)
+            else:
+                _add_thousands(value)
+    elif isinstance(node, list):
+        for value in node:
+            _add_thousands(value)
+    return node
+
+
 def build_facts(records: list[SkuRecord]) -> dict:
     """The complete fact pack. This is the only input the narrative layer ever sees."""
     portfolio = analyse_portfolio(records)
@@ -360,31 +385,35 @@ def build_facts(records: list[SkuRecord]) -> dict:
         ),
     }
 
-    return {
-        "meta": {
-            "reporting_month": config.MONTH_LABELS[config.CURRENT_MONTH],
-            "prior_month": config.MONTH_LABELS[config.PRIOR_MONTH],
-            "months_covered": [config.MONTH_LABELS[m] for m in config.MONTH_COLUMNS],
-            "planning_date": config.PLANNING_DATE.isoformat(),
-            "sku_count": len(skus),
-        },
-        "reorder_summary": reorder_summary,
-        "overstock_summary": overstock_summary,
-        "portfolio": {
-            **portfolio,
-            "total_revenue_opportunity_usd": total_revenue_opportunity,
-        },
-        "performance": {
-            "top_by_revenue_opportunity": [s["sku"] for s in by_opportunity[:3]],
-            "top_by_growth": [s["sku"] for s in by_growth[:3]],
-            "weakest_by_growth": [s["sku"] for s in by_growth[-3:]][::-1],
-            "stalling_skus": [s["sku"] for s in skus if s["trend"]["is_stalling_vs_portfolio"]],
-        },
-        "reorder_queue": reorder_queue,
-        "tensions": _find_tensions(skus),
-        "noise": _find_noise(portfolio),
-        "skus": skus,
-    }
+    return _add_thousands(
+        {
+            "meta": {
+                "reporting_month": config.MONTH_LABELS[config.CURRENT_MONTH],
+                "prior_month": config.MONTH_LABELS[config.PRIOR_MONTH],
+                "months_covered": [config.MONTH_LABELS[m] for m in config.MONTH_COLUMNS],
+                "planning_date": config.PLANNING_DATE.isoformat(),
+                "sku_count": len(skus),
+            },
+            "reorder_summary": reorder_summary,
+            "overstock_summary": overstock_summary,
+            "portfolio": {
+                **portfolio,
+                "total_revenue_opportunity_usd": total_revenue_opportunity,
+            },
+            "performance": {
+                "top_by_revenue_opportunity": [s["sku"] for s in by_opportunity[:3]],
+                "top_by_growth": [s["sku"] for s in by_growth[:3]],
+                "weakest_by_growth": [s["sku"] for s in by_growth[-3:]][::-1],
+                "stalling_skus": [
+                    s["sku"] for s in skus if s["trend"]["is_stalling_vs_portfolio"]
+                ],
+            },
+            "reorder_queue": reorder_queue,
+            "tensions": _find_tensions(skus),
+            "noise": _find_noise(portfolio),
+            "skus": skus,
+        }
+    )
 
 
 def _find_tensions(skus: list[dict]) -> list[dict]:

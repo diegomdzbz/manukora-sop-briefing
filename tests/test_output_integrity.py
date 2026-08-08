@@ -279,6 +279,47 @@ def test_the_committed_model_briefing_leads_with_the_engines_choice(facts):
     assert facts["tensions"][0]["sku"] in headline
 
 
+def test_prose_quotes_money_in_thousands_not_cents(facts):
+    """An executive briefing does not contain cents.
+
+    The no-rounding rule exists so a quoted figure traces to a computed one — but applied
+    to prose it produced "$413,483.72 in excess inventory value", which is unreadable and
+    tells a reader nothing they can act on. The engine now publishes every money figure in
+    thousands as well, so the readable form is also a traceable one.
+
+    Tables are exempt: a reader scanning a column wants the exact figure.
+    """
+    for name in ("sop_briefing_march-2026.md", "sop_briefing_march-2026_template.md"):
+        path = REPO_ROOT / "output" / name
+        if not path.exists():
+            continue
+        prose = [
+            line
+            for line in path.read_text(encoding="utf-8").splitlines()
+            if not line.lstrip().startswith("|")
+        ]
+        cents = [c for line in prose for c in re.findall(r"\$[\d,]+\.\d{2}\b", line)]
+        assert not cents, f"{name} quotes cents in prose: {cents}"
+
+
+def test_thousands_are_published_for_every_money_figure(facts):
+    """The `_k` form has to exist wherever prose might want it, or the rule cannot be kept."""
+
+    def walk(node, path=""):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if key.endswith("_usd") and isinstance(value, (int, float)):
+                    twin = key[: -len("_usd")] + "_k"
+                    assert twin in node, f"{path}.{key} has no {twin}"
+                    assert node[twin] == pytest.approx(value / 1000, abs=0.001)
+                walk(value, f"{path}.{key}")
+        elif isinstance(node, list):
+            for i, value in enumerate(node):
+                walk(value, f"{path}[{i}]")
+
+    walk(facts)
+
+
 def test_briefing_carries_no_column_codes(facts):
     """M1-M4 belong to the dataset, not to the reader."""
     briefing = render_briefing(facts)
