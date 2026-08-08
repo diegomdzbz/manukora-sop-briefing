@@ -1,5 +1,16 @@
 # n8n stack — verification
 
+![The workflow on the n8n canvas](canvas.png)
+
+Nine nodes. The schedule fans out to two HTTP calls — one for the fact pack, one for the
+prompt — which merge before the agent writes. **Post to Slack** is greyed out because it is
+deliberately deactivated (see the bottom of this file), and the warning on the **Claude**
+node is a missing credential: the repository ships no keys, so a freshly imported workflow
+is expected to look exactly like this until you add your own.
+
+---
+
+
 The two-service design in `docker-compose.yml` rests on a claim: **n8n cannot execute this
 project's Python.** That claim is load-bearing — if it were wrong, the whole compose stack
 would be unnecessary complexity.
