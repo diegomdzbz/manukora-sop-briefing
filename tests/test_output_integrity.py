@@ -279,6 +279,24 @@ def test_the_committed_model_briefing_leads_with_the_engines_choice(facts):
     assert facts["tensions"][0]["sku"] in headline
 
 
+def test_the_n8n_produced_briefing_has_no_unsourced_figures(facts):
+    """The workflow's output is held to the same standard as the CLI's.
+
+    `output/sop_briefing_from_n8n.md` was produced by running the n8n workflow end to end
+    (see n8n/VERIFICATION.md). It reaches the model through a different path — a Code node
+    building the request rather than providers.py — so checking it here is what stops the
+    two paths from drifting into different guarantees.
+    """
+    produced = REPO_ROOT / "output" / "sop_briefing_from_n8n.md"
+    if not produced.exists():
+        pytest.skip("no n8n-produced briefing to check")
+
+    problems = _unsourced_figures(produced.read_text(encoding="utf-8"), facts)
+    assert not problems, "the n8n output contains figures with no source:\n" + "\n".join(
+        f"  {value!r} in: {line}" for value, line in problems
+    )
+
+
 def test_prose_quotes_money_in_thousands_not_cents(facts):
     """An executive briefing does not contain cents.
 
@@ -289,7 +307,11 @@ def test_prose_quotes_money_in_thousands_not_cents(facts):
 
     Tables are exempt: a reader scanning a column wants the exact figure.
     """
-    for name in ("sop_briefing_march-2026.md", "sop_briefing_march-2026_template.md"):
+    for name in (
+        "sop_briefing_march-2026.md",
+        "sop_briefing_march-2026_template.md",
+        "sop_briefing_from_n8n.md",
+    ):
         path = REPO_ROOT / "output" / name
         if not path.exists():
             continue

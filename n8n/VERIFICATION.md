@@ -78,6 +78,65 @@ GET /prompt -> 200  source=prompts/v2_final.md  prompt=3277 chars  schema=8 fiel
 
 ---
 
+## 6. Does the workflow actually produce a briefing?
+
+The checks above prove the plumbing. This proves the product.
+
+```
+$ docker compose run --rm --no-deps --entrypoint sh n8n \
+    -c 'n8n execute --id wJK3eczmf4YlhOzw'
+
+  "mode": "cli",
+  "startedAt": "2026-08-08T03:03:45.008Z",
+  "stoppedAt":  "2026-08-08T03:04:05.096Z",
+  "status": "success",
+  "finished": true
+```
+
+Twenty seconds, all eleven nodes, no manual steps. It wrote
+[`output/sop_briefing_from_n8n.md`](../output/sop_briefing_from_n8n.md) — committed, and
+held to exactly the same standard as the CLI output:
+
+| | |
+|---|---|
+| Figures with no source in the fact pack | none |
+| Prose length | 754 words, inside the reading budget |
+| Cents quoted in prose | none |
+| Leads with the engine's top-ranked tension | yes |
+| Reorder rationales | 6 of 6 |
+
+`tests/test_output_integrity.py` checks this file alongside the others, so the workflow's
+output cannot quietly drift from the guarantees the CLI's output is held to.
+
+### Three things this run found that reading the config would not
+
+**`GEMINI_API_KEY` never reached the container.** `docker-compose.yml` forwarded
+`ANTHROPIC_API_KEY` and `SLACK_WEBHOOK_URL` and not the key the project actually uses. The
+model node would have failed on the first scheduled run, months from now, with nobody
+watching.
+
+**n8n blocks `$env` in expressions by default.** Even once the key was present, the
+expression could not read it without `N8N_BLOCK_ENV_ACCESS_IN_NODE=false`.
+
+**n8n blocks filesystem writes by default.** The run got all the way through the model call
+and the assembly, then failed on the last node. Fixed with
+`N8N_RESTRICT_FILE_ACCESS_TO=/data/output` — scoped to the one mounted directory rather
+than opened up wholesale.
+
+Each is a one-line config fix and each would have been a silent failure in production.
+
+### And n8n confirmed the architecture in its own logs
+
+While starting the execution:
+
+```
+Failed to start Python task runner ... because Python 3 is missing from this system
+```
+
+That is the container saying, unprompted, why the engine has to be a separate service.
+
+---
+
 ## Running it yourself
 
 ```bash
