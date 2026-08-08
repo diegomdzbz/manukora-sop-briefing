@@ -1,0 +1,50 @@
+# Two services, because n8n cannot execute this project's Python.
+#
+# The n8n image ships no interpreter and cannot see the repo on the host, so the engine
+# runs as its own service and n8n calls it over the internal network at
+# http://engine:8000/facts. That is also how you would deploy it.
+#
+#   docker compose up --build
+#   n8n     → http://localhost:5678   (import n8n/workflow.json)
+#   engine  → http://localhost:8000/docs
+
+services:
+  engine:
+    build: .
+    container_name: manukora-engine
+    ports:
+      - "8000:8000"
+    healthcheck:
+      # Loads and validates the dataset, so the stack does not report healthy while
+      # being unable to produce a fact pack.
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').status==200 else 1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: manukora-n8n
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_SECURE_COOKIE=false
+      - GENERIC_TIMEZONE=Pacific/Auckland
+      - N8N_DIAGNOSTICS_ENABLED=false
+      # Read from the host environment. Never hardcode these; see .env.example.
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}
+    volumes:
+      # n8n's own state (credentials, workflows). Gitignored — it holds secrets.
+      - n8n_data:/home/node/.n8n
+      # Where the workflow writes the finished briefing.
+      - ./output:/data/output
+    depends_on:
+      engine:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  n8n_data:
