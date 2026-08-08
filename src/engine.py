@@ -124,14 +124,19 @@ def analyse_sku(record: SkuRecord, portfolio_mom_growth: float) -> dict:
     reorder_point_months = target + lead_time
     reorder_point_breached = current_cover_months < reorder_point_months
 
+    phase_out_floor_days = None
     if phasing_out:
         # The brief deprioritises this SKU unless cover drops below its floor. Being under
         # target is not enough; a product being retired does not need a full buffer.
         rule = config.phase_out_rule(record.sku)
-        needs_reorder = current_cover_days < rule["reorder_floor_days"]
+        # Exposed as a number, not only inside the sentence below. The briefing cites this
+        # threshold to justify not reordering, and a figure that exists only inside a
+        # prose string cannot be traced — which tests/test_output_integrity.py caught.
+        phase_out_floor_days = rule["reorder_floor_days"]
+        needs_reorder = current_cover_days < phase_out_floor_days
         deprioritised_reason = (
             f"Phasing out in {rule['phase_out_period']}; reorder only below "
-            f"{rule['reorder_floor_days']} days of cover"
+            f"{phase_out_floor_days} days of cover"
         )
     elif record.has_order_placed:
         # An inbound order does not automatically settle the question. What matters is
@@ -217,6 +222,7 @@ def analyse_sku(record: SkuRecord, portfolio_mom_growth: float) -> dict:
             "reorder_point_breached": reorder_point_breached,
             "overstocked": overstocked,
             "phasing_out": phasing_out,
+            "phase_out_floor_days": phase_out_floor_days,
             "needs_reorder": needs_reorder,
             "deprioritised_reason": deprioritised_reason,
             "urgency": urgency,
@@ -247,6 +253,11 @@ def analyse_portfolio(records: list[SkuRecord]) -> dict:
     mom_growth = (current / prior - 1) if prior else 0.0
 
     first, last = config.MONTH_COLUMNS[0], config.CURRENT_MONTH
+    # Growth across the whole period, so the briefing can show the run and not just the
+    # last step. Computed here rather than in the renderer: the renderer formats numbers,
+    # it does not produce them — a boundary tests/test_output_integrity.py enforces, and
+    # caught being crossed when this figure was first added to the template by mistake.
+    period_growth = (units_by_month[last] / units_by_month[first] - 1) if units_by_month[first] else 0.0
     amazon_share = {
         config.MONTH_LABELS[m]: round(amazon_by_month[m] / units_by_month[m] * 100, 1)
         for m in config.MONTH_COLUMNS
@@ -257,6 +268,7 @@ def analyse_portfolio(records: list[SkuRecord]) -> dict:
         "units_by_month": {config.MONTH_LABELS[m]: units_by_month[m] for m in config.MONTH_COLUMNS},
         "current_month_units": current,
         "month_on_month_pct": round(mom_growth * 100, 1),
+        "period_growth_pct": round(period_growth * 100, 1),
         "channel": {
             "shopify_units_by_month": {
                 config.MONTH_LABELS[m]: shopify_by_month[m] for m in config.MONTH_COLUMNS
@@ -335,6 +347,19 @@ def build_facts(records: list[SkuRecord]) -> dict:
         ),
     }
 
+    # Capital sitting above target across the whole range. A natural figure to want in the
+    # narrative, and one the model reached for by adding two numbers together on a live run
+    # — which the integrity check rejected, correctly. Computing it here makes it citable.
+    overstock_summary = {
+        "sku_count": sum(1 for s in skus if s["flags"]["overstocked"]),
+        "total_excess_units": sum(
+            s["inventory"]["excess_units_above_target"] for s in skus if s["flags"]["overstocked"]
+        ),
+        "total_excess_value_usd": round(
+            sum(s["inventory"]["excess_value_usd"] for s in skus if s["flags"]["overstocked"]), 2
+        ),
+    }
+
     return {
         "meta": {
             "reporting_month": config.MONTH_LABELS[config.CURRENT_MONTH],
@@ -344,6 +369,7 @@ def build_facts(records: list[SkuRecord]) -> dict:
             "sku_count": len(skus),
         },
         "reorder_summary": reorder_summary,
+        "overstock_summary": overstock_summary,
         "portfolio": {
             **portfolio,
             "total_revenue_opportunity_usd": total_revenue_opportunity,

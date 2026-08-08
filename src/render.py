@@ -244,7 +244,28 @@ def _order_section(facts: dict, prose: dict) -> list[str]:
 
 
 def _performance_section(facts: dict, prose: dict) -> list[str]:
-    return [f"## How {facts['meta']['reporting_month']} went", "", prose["performance_note"], ""]
+    """How the month went, against the shape of the whole period.
+
+    A single month-on-month figure cannot tell a SKU that has climbed all period from one
+    that jumped once, and the brief asks for trend context across prior months — so the
+    four-month trajectory is rendered here rather than left in the fact pack.
+    """
+    out = [f"## How {facts['meta']['reporting_month']} went", "", prose["performance_note"], ""]
+
+    by_month = facts["portfolio"]["units_by_month"]
+    months = list(by_month)
+
+    out.append("Units across the period, so the month reads against the run rather than alone:")
+    out.append("")
+    out.append("| " + " | ".join(months) + " | Period |")
+    out.append("|" + "---|" * (len(months) + 1))
+    out.append(
+        "| "
+        + " | ".join(_units(by_month[m]) for m in months)
+        + f" | {_pct(facts['portfolio']['period_growth_pct'])} |"
+    )
+    out.append("")
+    return out
 
 
 def _watch_section(prose: dict) -> list[str]:
@@ -271,31 +292,56 @@ def _closing_section(prose: dict) -> list[str]:
 
 def _appendix(facts: dict) -> list[str]:
     out = ["---", "", "## Every SKU", ""]
-    out.append("| SKU | Units | MoM | Cover | Target | Status | Opportunity |")
-    out.append("|---|---|---|---|---|---|---|")
+    out.append("| SKU | Units | MoM | Trend/mo | Cover | Target | Status | Opportunity |")
+    out.append("|---|---|---|---|---|---|---|---|")
     label = {
         "critical": "Below buffer",
         "act_now": "Order now",
         "overstocked": "Overstocked",
         "healthy": "Fine",
     }
+    launch_adjusted = False
     for s in sorted(facts["skus"], key=lambda s: -s["money"]["revenue_opportunity_usd"]):
-        inv = s["inventory"]
+        inv, trend = s["inventory"], s["trend"]
         note = "Phasing out" if s["flags"]["phasing_out"] else label[s["flags"]["urgency"]]
+        # Compounded across the SKU's own trend window — which for the Bioactive Blends
+        # starts after their launch month, so their growth is not inflated by a partial
+        # first month.
+        marker = ""
+        if trend["baseline_excludes_launch_month"]:
+            marker = " *"
+            launch_adjusted = True
         out.append(
             f"| {s['sku']} | {_units(s['demand']['current_month_units'])} | "
-            f"{_pct(s['trend']['month_on_month_pct'])} | {inv['current_cover_months']} | "
+            f"{_pct(trend['month_on_month_pct'])} | "
+            f"{_pct(trend['monthly_growth_pct'])}{marker} | {inv['current_cover_months']} | "
             f"{inv['target_months_cover']} | {note} | "
             f"{_usd(s['money']['revenue_opportunity_usd'])} |"
         )
     out.append("")
-    out.append(
+
+    notes = [
+        f"**MoM** compares {facts['meta']['reporting_month']} with "
+        f"{facts['meta']['prior_month']}. **Trend/mo** is the average monthly rate across the "
+        f"whole period, so a SKU that climbed steadily reads differently from one that jumped "
+        f"once."
+    ]
+    if launch_adjusted:
+        first_month = facts["meta"]["months_covered"][0]
+        notes.append(
+            f"\\* Measured from the SKU's first full trading month rather than from "
+            f"{first_month}. The Bioactive Blends launched mid-period, and including their "
+            f"partial first month would overstate their growth — which would push them up a "
+            f"ranking driven by projected demand."
+        )
+    notes.append(
         f"Cover is stock on hand divided by {facts['meta']['reporting_month']} demand across "
         f"both channels, which draw on one pooled inventory position. Revenue opportunity is "
         f"retail price times projected demand for next month. Reorder quantities assume a "
         f"{config.DEFAULT_LEAD_TIME_MONTHS}-month supplier lead time — an assumption, not a "
         f"figure from the data. See OPEN-QUESTIONS.md."
     )
+    out.append("\n\n".join(notes))
     return out
 
 
