@@ -3,7 +3,14 @@
 Turns four months of SKU-level sales and inventory data into a monthly S&OP briefing an
 executive can read in five minutes and act on.
 
-**→ [The generated briefing](output/sop_briefing_march-2026.md)** · **→ [Part 2 architecture](ARCHITECTURE.md)**
+**→ [The generated briefing](output/sop_briefing_march-2026.md)** · **→ [Part 2 architecture](ARCHITECTURE.md)** · **→ [How it was verified](n8n/VERIFICATION.md)**
+
+![The n8n workflow](n8n/canvas.png)
+
+*The monthly workflow. Two HTTP calls — the fact pack and the prompt — merge before the
+agent writes, because [n8n cannot execute this project's Python](n8n/VERIFICATION.md) and
+the prompt is served rather than copied. Slack is wired and deliberately off; the warning
+on the model node is a missing credential, because the repo ships no keys.*
 
 ---
 
