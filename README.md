@@ -15,11 +15,14 @@ executive can read in five minutes and act on.
 
 ![The n8n workflow](n8n/canvas.png)
 
-*The monthly workflow, which [runs end to end in twenty seconds](n8n/VERIFICATION.md) and
-writes a briefing that passes the same tests as the CLI's. Two HTTP calls — the fact pack
-and the prompt — merge before the model writes, because n8n cannot execute this project's
-Python and the prompt is served rather than copied. Slack is wired and deliberately off.
-Getting it to run surfaced three silent config failures, each documented.*
+*The monthly workflow as imported, which [runs end to end in twenty seconds](n8n/VERIFICATION.md)
+and writes a briefing that passes the same tests as the CLI's. Two HTTP calls — the fact
+pack and the prompt — merge before the model writes, because n8n cannot execute this
+project's Python and the prompt is served rather than copied. The two code nodes mirror
+`providers.py` and `render.py`, so both paths hold the model to one contract. No credential
+warnings: the key comes from the container environment, so the export is committable as-is.
+Slack is wired and deliberately off. Getting it to run surfaced three silent config
+failures, each documented.*
 
 ---
 

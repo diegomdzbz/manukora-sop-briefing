@@ -2,11 +2,22 @@
 
 ![The workflow on the n8n canvas](canvas.png)
 
-Nine nodes. The schedule fans out to two HTTP calls — one for the fact pack, one for the
-prompt — which merge before the agent writes. **Post to Slack** is greyed out because it is
-deliberately deactivated (see the bottom of this file), and the warning on the **Claude**
-node is a missing credential: the repository ships no keys, so a freshly imported workflow
-is expected to look exactly like this until you add your own.
+Eleven nodes, as imported from [`workflow.json`](workflow.json) — no manual setup, no
+credentials added.
+
+Two triggers on the left: the monthly schedule, and an on-demand trigger that is how the
+run recorded below was started. They fan out to two HTTP calls — one for the fact pack, one
+for the prompt and schema — which merge before the model request is built.
+
+**Build model request** and **Assemble briefing** are code nodes that mirror
+`src/providers.py` and `src/render.py`, so the workflow and the CLI hold the model to the
+same contract and assemble the document the same way. **Write the briefing** is a plain
+HTTP call: the key is read from the container environment rather than stored as an n8n
+credential, which is why nothing here carries a credential warning and why the export can
+be committed without redacting anything.
+
+**Post to Slack** is greyed out because it is deliberately deactivated — see the bottom of
+this file.
 
 ---
 
