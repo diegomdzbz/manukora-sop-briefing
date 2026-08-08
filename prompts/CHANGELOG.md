@@ -187,6 +187,37 @@ prompt wording that fixes that — only moving the arithmetic somewhere it can b
 That is the argument for everything else in this repository, and it is now an observation
 rather than a prediction.
 
+## The same prompt on two providers is not the same briefing
+
+Both paths in `providers.py` have now been run — same prompt, same schema, same fact pack.
+They do not behave the same, and nothing but running both would have shown it.
+
+| | Gemini 3.6 Flash | Claude Opus 5 |
+|---|---|---|
+| Prose length, same instruction | 822–893 words | 960–1,011 |
+| Inside the reading budget | yes | **no**, consistently |
+| Held the reorder-queue contract | yes | once returned a seventh, empty entry |
+
+**Claude wrote the better briefing.** It is the run that noticed both overstocked SKUs are
+250g lines while everything short is 500g or Bioactive, and named the format split — an
+observation the other runs did not make. It also would not come in under the ceiling. Given
+the computed allowance it wrote 713 words against 653; told its own word count and asked to
+cut, it came back at 961 against 900. The overshoot is stable, not random.
+
+**So the committed briefing is Gemini's, because it is the one that meets the requirement.**
+Raising the ceiling to 1,000 would have made Claude's pass, and that ceiling was always a
+proxy I chose rather than a figure the brief states — which is exactly why it is not moving
+now that a result depends on it. Moving a threshold because your own output missed it is not
+a calibration.
+
+One Claude run failed the contract rather than the budget, returning a seventh reorder
+rationale with an empty SKU. `check_against_facts` rejected it. That check was written
+against a hypothetical and has now caught a real one.
+
+The practical lesson for anyone maintaining this: **provider choice is a length and
+compliance decision, not only a quality one.** The schema holds either way; the reading
+budget does not.
+
 ## What has still not been run
 
 **The Anthropic path was not exercised.** `providers.py` implements both; the live run used
