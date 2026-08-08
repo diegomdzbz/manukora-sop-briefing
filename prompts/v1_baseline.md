@@ -33,6 +33,16 @@ Be thorough and make sure your numbers are accurate.
 
 ---
 
+## What it actually produced
+
+v1 **was run** — same model as the production path, so the prompt is the only variable.
+Output in [`v1_baseline_output.md`](v1_baseline_output.md), findings in
+[`CHANGELOG.md`](CHANGELOG.md). Short version: it is a confident, well-formatted document
+with a recommendation in it that would lose money, and nothing on the page says which parts
+to trust.
+
+---
+
 ## Why this fails
 
 Four problems, in order of how much they matter.

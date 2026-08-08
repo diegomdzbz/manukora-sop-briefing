@@ -185,10 +185,32 @@ There are two, and both are in the repo.
 actually use** hands it a fact pack with every figure already computed and asks only for
 prose.
 
-That is not a wording improvement — it is a different architecture, and it is the reason
-the change was necessary: v1's failure mode is that correct output and confident-but-wrong
-output look identical to the reader. No instruction fixes that. Its last line was "make sure
-your numbers are accurate", which is the tell — an instruction you cannot check is a hope.
+### I ran v1, and it recommended buying stock for a discontinued product
+
+Same model as the production path, so the prompt is the only variable. Output committed at
+[`prompts/v1_baseline_output.md`](prompts/v1_baseline_output.md); reproduce with
+`python scripts/run_v1_baseline.py`.
+
+v1 is not obviously bad — it got the MGO 1700+ three-month target right, read
+`Order_Arrival_Months = 0` correctly, got every cover figure right to two decimals, and
+produced a well-organised document. Then it says this about Propolis Tincture 30ml, which
+is being retired this quarter:
+
+> *"Stock cover is at a critical 1.37 months. Issue an immediate emergency batch order of
+> 500 units."*
+
+It never mentions the phase-out anywhere. It also got January and February portfolio totals
+wrong — by 48 and 120 units, in the trend section the brief asked for by name — while
+getting December and March exactly right. And it labels the overstocked, stalling SKU
+"HEALTHY", noting the 2,000 inbound units in a table cell and recommending nothing about
+them: the most valuable observation in the dataset, present as a data point and absent as a
+decision.
+
+**The problem is not that v1 made mistakes. It is that its mistakes are invisible.**
+Correct figures and wrong ones are formatted identically, and the one recommendation that
+would lose money is the most confidently worded sentence on the page. No wording fixes
+that — only moving the arithmetic somewhere it can be tested. v1's last line was "make sure
+your numbers are accurate", which is the tell: an instruction you cannot check is a hope.
 
 Full change-by-change account in [`prompts/CHANGELOG.md`](prompts/CHANGELOG.md).
 
