@@ -262,10 +262,10 @@ with the most urgent reorder instead of the hardest one. Defensible, but ranking
 engine's job and letting the model choose meant the lead would vary run to run. Fixed in
 the prompt *and* enforced in `check_against_facts()` — prompt for intent, enforce in code.
 
-**What still has not been run:** v1 was never executed, so its critique is reasoning about
-the design rather than a recorded A/B. And `providers.py` implements both Anthropic and
-Google, but only the Google path has actually returned a briefing — the Anthropic request
-shape is written against the documented API and reviewed, not proven.
+**What still has not been run:** `providers.py` implements both Anthropic and Google, but
+only the Google path has actually returned a briefing. Both enforce the output schema
+server-side, and the Anthropic request shape is written against the documented API and
+reviewed — but reviewed is not proven, and this section exists to keep that distinction.
 
 ---
 
@@ -297,7 +297,8 @@ API key, and fails if the committed output drifts from what the code produces.
 | Path | |
 |---|---|
 | [`data/`](data/) | The mock dataset from the brief, verbatim |
-| [`src/`](src/) | Config, loader, engine, schema, narrative, renderer, CLI |
+| [`src/`](src/) | Config, loader, engine, schema, providers, narrative, renderer, CLI, and the `/facts` service n8n calls |
+| [`scripts/`](scripts/) | `run_v1_baseline.py` — reproduces the v1 run |
 | [`prompts/`](prompts/) | Both prompt stacks and the changelog |
 | [`tests/`](tests/) | Business rules, arithmetic, output integrity |
 | [`output/`](output/) | The generated briefing and its fact pack |
