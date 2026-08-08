@@ -74,19 +74,24 @@ def main(argv: list[str] | None = None) -> int:
         briefing = render_briefing(facts)
         source = "deterministic template"
     else:
-        from .narrative import write_briefing
+        from .narrative import write_prose
+        from .render import compose_briefing
 
         try:
-            briefing = write_briefing(facts)
+            prose, source = write_prose(facts)
         except Exception as exc:  # noqa: BLE001 - surfaced to the operator, see RUNBOOK.md
             print(f"Narrative layer failed: {exc}", file=sys.stderr)
             print("Re-run with --no-llm for the template briefing.", file=sys.stderr)
             return 1
-        source = "narrative layer"
+        briefing = compose_briefing(facts, prose)
 
     from .render import prose_word_count
 
-    briefing_path = args.output_dir / f"sop_briefing_{month_slug}.md"
+    # The two paths write to different files so both can be committed. The model-written
+    # briefing is the deliverable; the template render is the control that CI regenerates
+    # and diffs, since only it is deterministic.
+    suffix = "_template" if args.no_llm else ""
+    briefing_path = args.output_dir / f"sop_briefing_{month_slug}{suffix}.md"
     briefing_path.write_text(briefing, encoding="utf-8")
     words = prose_word_count(briefing)
     budget = "within" if words <= config.MAX_BRIEFING_WORDS else "OVER"

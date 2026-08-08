@@ -99,16 +99,47 @@ both.
 
 ---
 
-## What has not been run
+## What running it actually taught me
 
-**v1 was never executed against the live API, and neither was v2.** No Anthropic API key
-was available while building this, so `narrative.py` is written and reviewed but not
-exercised end to end, and the committed briefing in `output/` is the deterministic
-`--no-llm` render.
+v2 **was** run. `output/sop_briefing_march-2026.md` is written by a model, and it passes
+`test_output_integrity.py` — every figure in it traces back to `facts.json`. That is the
+central claim of this architecture, demonstrated rather than asserted.
 
-The v1 critique above is therefore reasoning about the design, not a transcript of a
-recorded A/B run — and it is labelled that way rather than dressed up as one. The failures
-in "Where the AI was wrong" are real and observable in this repo's git history; the v1-run
-comparison is not. Given a key, the first thing to do is generate the model-written
-briefing and diff its figures against the template render — a check
-`test_output_integrity.py` already implements.
+Three things surfaced on the first live run that no amount of reading the code would have
+found. All three are now regression tests.
+
+**The integrity check had two false-positive modes, and real model prose triggered both.**
+
+*Abbreviated SKU names.* The check stripped exact SKU names before extracting figures. The
+model wrote "the MGO 263+ and MGO 514+ formats" and "MGO 100+ 250g" — dropping the "Manuka
+Honey" prefix, as any writer would — and five product codes were reported as invented
+figures. Fixed by treating a digit followed by `+`, `g` or `ml` as an identifier wherever
+it appears, which is the right rule rather than a longer list of names.
+
+*Date order.* The renderer writes "1 May 2026". The model wrote "May 1, 2026" in prose,
+which left the year orphaned and reported `2026` as an unsourced figure. Neither format is
+wrong; the check now reads both.
+
+Both would have been flaky-test-in-CI within a week, and a flaky integrity check gets
+deleted rather than fixed. Finding them on a real response, before the repo shipped, is
+the argument for running the thing.
+
+**The model took a decision that belonged to the engine.** Asked for a headline, it led
+with the most urgent reorder (MGO 514+ 500g, overdue, $34k at stake) instead of the hardest
+decision (MGO 100+ 250g, stalled and over-covered). Both are defensible reads — but ranking
+is the engine's job, and letting the model choose meant the lead would vary run to run.
+Fixed in two places: `v2_final.md` now says the headline is the first entry in `tensions`,
+and `check_against_facts()` rejects a briefing that leads with anything else. Prompt for
+intent, enforce in code.
+
+## What has still not been run
+
+**v1 was never executed.** Its critique above is reasoning about the design, not a
+transcript of a recorded A/B run, and it is labelled that way rather than dressed up as
+one.
+
+**The Anthropic path was not exercised.** `providers.py` implements both; the live run used
+Gemini, because that was the key available. Both enforce the schema server-side — Anthropic
+through structured outputs, Google through `responseSchema` — but only the Google path has
+actually returned a briefing. The Anthropic request shape is written against the documented
+API and reviewed, not proven.

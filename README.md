@@ -12,18 +12,39 @@ executive can read in five minutes and act on.
 ```bash
 git clone https://github.com/diembz/manukora-sop-briefing
 cd manukora-sop-briefing
-pip install -r requirements.txt
+pip install pytest              # the only dependency, and only for the tests
 
-python -m src.main --no-llm    # complete briefing, no API key required
-python -m pytest -q            # 50 tests
+python -m src.main --no-llm     # complete briefing, no API key required
+python -m pytest -q             # 54 tests, no secrets needed
 ```
 
 `--no-llm` renders the whole briefing from a deterministic template — same figures, plainer
-prose. Nothing in this repo needs a key to run, and the finished briefing is committed, so
-you can evaluate the output without running anything at all.
+prose. Nothing here needs a key to run, and both briefings are committed, so the output can
+be evaluated without running anything at all.
 
-To have the model write the prose instead: copy `.env.example` to `.env`, add an Anthropic
-key, and drop the flag.
+To have a model write the prose: put a key in `.env` and drop the flag.
+
+| File in `output/` | Written by |
+|---|---|
+| `sop_briefing_march-2026.md` | **A model.** The deliverable |
+| `sop_briefing_march-2026_template.md` | The deterministic template. The control |
+| `facts_march-2026.json` | The engine. Both of the above render from this |
+
+**Providers.** The narrative layer takes whichever key is present — `ANTHROPIC_API_KEY`
+first, then `GEMINI_API_KEY`. Both enforce the output schema server-side (Anthropic through
+structured outputs, Google through `responseSchema`), so the guarantee is the same either
+way. Neither needs an SDK: both are plain HTTPS calls over the standard library, so you can
+run this without installing a client for a vendor you do not use.
+
+Keeping it swappable is not a hedge. The narrative layer is the one place in this project
+where the vendor is genuinely an implementation detail, because everything that matters —
+the figures, the ranking, the business rules — is decided before the call is made. The
+committed briefing was generated with Gemini, because that was the key on hand.
+
+> **A note on data hygiene.** Google's free tier reserves the right to train on submitted
+> data. That is acceptable here — the dataset is mock data from an exercise brief. With
+> real Manukora sales figures it would not be, and the provider choice would need to be
+> made on that basis rather than on which key was convenient.
 
 ---
 
@@ -197,17 +218,32 @@ which.
 the one with the hardest decision. A fast-selling product that is merely over-covered is a
 scheduling question; a stalled one is a capital question.
 
-**What has not been run:** no Anthropic API key was available, so `narrative.py` is written
-and reviewed but never executed end to end. The committed briefing is the deterministic
-render. This is recorded rather than smoothed over — a repo that overstates what it ran is
-worse than one that ran less.
+**What running it taught me that reading it could not.** The briefing in `output/` is
+written by a model and passes the integrity check. Getting there surfaced three things:
+
+The check had **two false-positive modes** that only real prose triggers. The model wrote
+"the MGO 263+ and MGO 514+ formats" — dropping the "Manuka Honey" prefix, as any writer
+would — and five product codes were reported as invented figures. It also wrote
+"May 1, 2026" where the renderer writes "1 May 2026", orphaning the year. Both would have
+become flaky CI failures within a week, and a flaky integrity check gets deleted rather
+than fixed. Both are now regression tests.
+
+And **the model took a decision that belonged to the engine**: asked for a headline, it led
+with the most urgent reorder instead of the hardest one. Defensible, but ranking is the
+engine's job and letting the model choose meant the lead would vary run to run. Fixed in
+the prompt *and* enforced in `check_against_facts()` — prompt for intent, enforce in code.
+
+**What still has not been run:** v1 was never executed, so its critique is reasoning about
+the design rather than a recorded A/B. And `providers.py` implements both Anthropic and
+Google, but only the Google path has actually returned a briefing — the Anthropic request
+shape is written against the documented API and reviewed, not proven.
 
 ---
 
 ## How I verified it
 
 ```bash
-python -m pytest -q     # 50 tests
+python -m pytest -q     # 54 tests
 ```
 
 **The maths.** `tests/test_business_rules.py` has one test per rule the brief states, and
