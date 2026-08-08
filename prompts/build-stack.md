@@ -63,10 +63,24 @@ difference between two numbers already in the fact pack — move it into the eng
 *wrong* reading produces, not just that the right one passes. A test that only confirms
 today's output documents nothing.
 
-**On honesty.** Say what was not done. No API key was available, so `narrative.py` is
-written and reviewed but never executed; the committed briefing is the deterministic render.
-That is recorded in the prompt changelog rather than smoothed over — a repo that overstates
-what it ran is worse than one that ran less.
+**On honesty — and on keeping it current.** Say what was not done, then keep saying the
+true version as the facts change.
+
+For most of this build there was no API key, so `narrative.py` was written and reviewed but
+never executed, and the committed briefing was the deterministic render. That was recorded
+plainly rather than smoothed over, because a repo that overstates what it ran is worse than
+one that ran less.
+
+Then a key turned up, the narrative layer ran, v1 ran, and both statements stopped being
+true — **and the disclaimers did not update themselves.** A later audit found this file
+still claiming nothing had been executed, and the README asserting "v1 was never executed"
+seventy-seven lines below a section titled *"I ran v1"*. The honesty sections had become the
+stale sections, precisely because they were written once and treated as settled.
+
+The lesson is the one this whole repository is built around: a claim nothing checks will
+drift. Test what you can — every figure in the briefing traces to a computed fact because a
+test says so — and for the prose that cannot be tested, re-read it against reality before
+shipping rather than trusting that it aged well.
 
 **On scope.** Deliver what was asked at the scope intended. SQL belongs in Part 2, where a
 daily brief genuinely needs a warehouse — not forced into Part 1, where a twelve-row CSV
