@@ -21,7 +21,7 @@ off; no credential warnings because the key comes from the container environment
 ## Quick start
 
 ```bash
-git clone https://github.com/diembz/manukora-sop-briefing
+git clone https://github.com/diegomdzbz/manukora-sop-briefing
 cd manukora-sop-briefing
 pip install pytest              # the only dependency, and only for the tests
 
